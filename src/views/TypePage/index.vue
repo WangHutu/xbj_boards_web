@@ -34,7 +34,7 @@
 import { ref, onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import sysdialog from './sysdialog.vue'
-// import { getType } from '@/api/board'
+import { Boards } from '@/api/api'
 const selectType = ref({
   typeName: ''
 })
@@ -55,13 +55,13 @@ const change = (val: String, event: any) => {
 
 const getTypeList = (data:any) => {
   console.log(data, 'data')
-  // getType(data).then((res) => {
-  //   if (res.code == '200') {
-  //     if (res.data) {
-  //       tableData.value = res.data
-  //     }
-  //   }
-  // })
+  Boards.getTypeList(data).then((res:any) => {
+    if (res.code == '200') {
+      if (res.data) {
+        tableData.value = res.data
+      }
+    }
+  })
 }
 
 onMounted(() => {

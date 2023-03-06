@@ -1,22 +1,7 @@
-import request from './request'
+import { request } from '@/request/axios'
+
+
 
 export function getType(data) {
-  console.log(data, 'parmas')
-  return request({
-    url: '/getTypeList',
-    method: 'post',
-    data
-  })
+  return request('/getTypeList', data, 'get',)
 }
-
-// import NewAxios from './axios'
-// let Axios = new NewAxios('')
-// export default (Axios: any): any => {
-//   return {
-//     getType(data: any) {
-//       return Axios.GetByBody('/getTypeList', data).then((res: any) => {
-//         return res.data
-//       })
-//     }
-//   }
-// }

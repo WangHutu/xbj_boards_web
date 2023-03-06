@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { userLoginApi, userRegisterApi } from 'api/user'
+import { UserService } from '@/api/api'
 import { useRouter } from 'vue-router'
 import { setLocal } from '@/common/utils'
 
@@ -110,7 +110,7 @@ const rules = reactive({
 })
 
 // change tab
-const changeTab = (state) => {
+const changeTab = (state:any) => {
   tabState.value = state
   resetForm(ruleFormRef.value)
   resetForm(ruleFormLoginRef.value)
@@ -119,12 +119,12 @@ const changeTab = (state) => {
 // submit
 const submitForm = (formEl) => {
   if (!formEl) return
-  formEl.validate((valid) => {
+  formEl.validate((valid:any) => {
     if (valid) {
       console.log('submit!')
       if (tabState.value === 'Login') {
         console.log(ruleForm)
-        userLoginApi(ruleForm).then((res) => {
+        UserService.userLoginApi(ruleForm).then((res:any) => {
           if (res.code == '200') {
             if (res.data.info) {
               setLocal('info', res.data.info)
@@ -134,7 +134,7 @@ const submitForm = (formEl) => {
           }
         })
       } else {
-        userRegisterApi(ruleForm).then((res) => {
+        UserService.userRegisterApi(ruleForm).then((res:any) => {
           if (res.code == '200') {
             changeTab('Login')
           }

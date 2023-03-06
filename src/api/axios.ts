@@ -1,5 +1,5 @@
-import Axios from 'axios'
-const { error } = console
+import Axios from "axios";
+const { error } = console;
 // import { Loading } from 'element-ui'
 /**
  *
@@ -18,22 +18,22 @@ const { error } = console
  * @param { await: [{ method: 请求方式, url: 请求路径 }] } Array 需要同步的接口 方式为可选参数，路径为必传参数
  **/
 class NewAxios {
-  config: any
-  lineUp: any
-  errTimeout: any
-  instance: any
-  errorArr: Array<any>
-  antiShake: any
-  loadingSwitch: number
-  Loading: any
+  config: any;
+  lineUp: any;
+  errTimeout: any;
+  instance: any;
+  errorArr: Array<any>;
+  antiShake: any;
+  loadingSwitch: number;
+  Loading: any;
   constructor(parameter: any) {
     this.config = {
-      method: 'get', // 请求方式
+      method: "get", // 请求方式
       timeout: 1000 * 60 * 5, // 请求时长
       antiShakeTime: 300, // 防抖时间
       isAntiShake: 1, // 是否防抖
-      url: '', // 接口路由
-      baseURL: '', // 基础请求地址
+      url: "", // 接口路由
+      baseURL: "", // 基础请求地址
       prompt: true, // 是否打开报错提示（需要与message配合）
       withCredentials: false, // 是否允许携带凭证
       headers: {}, // header参数
@@ -43,151 +43,154 @@ class NewAxios {
       reqFn: null, // 请求前拦截
       resFn: null, // 请求后拦截
       await: null, // 需等待的接口
-      cancelToken: null //取消请求
-    }
+      cancelToken: null, //取消请求
+    };
     this.lineUp = {
       switch: false,
       timeout: null,
       await: [],
       first: [],
-      after: []
-    }
-    this.errTimeout = null
-    this.instance = null
-    this.errorArr = []
-    this.antiShake = {}
-    this.loadingSwitch = 0
-    this.Loading = null
-    Object.assign(this.config, parameter)
+      after: [],
+    };
+    this.errTimeout = null;
+    this.instance = null;
+    this.errorArr = [];
+    this.antiShake = {};
+    this.loadingSwitch = 0;
+    this.Loading = null;
+    Object.assign(this.config, parameter);
     if (this.config.await && this.config.await.length) {
-      this.config.switch = true
+      this.config.switch = true;
       this.config.await.forEach((item: any) => {
-        const val = JSON.stringify(item)
-        this.lineUp.await.push(val)
-      })
+        const val = JSON.stringify(item);
+        this.lineUp.await.push(val);
+      });
     }
 
-    this.interceptors()
+    this.interceptors();
   }
 
   async reset(options: any) {
-    options && Object.assign(this.config, options)
+    options && Object.assign(this.config, options);
   }
 
   async interceptors() {
     // 请求拦截
     return new Promise((res) => {
-      this.instance = Axios.create({})
+      this.instance = Axios.create({});
       this.instance.interceptors.request.use(
         (config: any) => {
-          this.config.reqFn && this.config.reqFn(config)
-          config.headers.authorization = localStorage.getItem('authorization')
-          config.headers['projectId'] = localStorage.getItem('projectName')
-          config.headers.language = localStorage.getItem('language')
+          this.config.reqFn && this.config.reqFn(config);
+          config.headers.authorization = localStorage.getItem("authorization");
+          config.headers["projectId"] = localStorage.getItem("projectName");
+          config.headers.language = localStorage.getItem("language");
           if (config.headers.bolb) {
-            config.responseType = 'blob'
+            config.responseType = "blob";
           }
-          return config
+          return config;
         },
         (err: any) => Promise.reject(err)
-      )
+      );
 
       this.instance.interceptors.response.use(
         (response: any) => {
-          this.config.resFn && this.config.resFn(response)
-          return response
+          this.config.resFn && this.config.resFn(response);
+          return response;
         },
         (err: any) => {
-          if (err.message.includes('timeout') || err.message.includes('Network Error')) {
-            error('网络异常，请重新尝试')
+          if (
+            err.message.includes("timeout") ||
+            err.message.includes("Network Error")
+          ) {
+            error(`网络异常，请重新尝试`);
             this.config.message &&
               this.config.message({
                 showClose: true,
-                message: '网络异常，请重新尝试',
-                type: 'error'
-              })
+                message: `网络异常，请重新尝试`,
+                type: "error",
+              });
           }
-          Promise.reject(err)
-          return err
+          Promise.reject(err);
+          return err;
         }
-      )
-      res(true)
-    })
+      );
+      res(true);
+    });
   }
 
   errorHandling() {
-    clearTimeout(this.errTimeout)
+    clearTimeout(this.errTimeout);
     this.errTimeout = setTimeout(() => {
       this.errorArr.forEach((item) => {
         if (item.type) {
-          item.type = 0
+          item.type = 0;
           this.config.message &&
             this.config.message({
               showClose: true,
               message: item.val,
-              type: 'error'
-            })
+              type: "error",
+            });
         }
-      })
-      this.errorArr.length = 0
-    }, 500)
+      });
+      this.errorArr.length = 0;
+    }, 500);
   }
 
   getError(data: any, prompt: boolean) {
-    const { code, msg } = data || {}
+    const { code, msg } = data || {};
     if (code !== 200 && code !== 0 && prompt) {
-      const val = msg || '接口错误'
+      const val = msg || "接口错误";
       if (this.errorArr.length) {
-        const isExists = this.errorArr.every((item) => item.val === msg)
+        const isExists = this.errorArr.every((item) => item.val === msg);
         !isExists &&
           this.errorArr.push({
             type: 1,
-            val
-          })
+            val,
+          });
       } else {
         this.errorArr.push({
           type: 1,
-          val
-        })
+          val,
+        });
       }
     }
   }
 
   clearAntiShake(tag: string) {
-    ;+this.config.isAntiShake === 1 &&
+    +this.config.isAntiShake === 1 &&
       setTimeout(() => {
-        delete this.antiShake[tag]
-      }, this.config.antiShakeTime || this.config.timeout)
+        delete this.antiShake[tag];
+      }, this.config.antiShakeTime || this.config.timeout);
   }
 
   parade(obj: any) {
-    const { method, url } = obj
-    const tag = JSON.stringify({ method, url })
+    const { method, url } = obj;
+    const tag = JSON.stringify({ method, url });
     if (this.lineUp.await.includes(url) || this.lineUp.await.includes(tag)) {
-      this.lineUp.first.push(this.Request(obj))
+      this.lineUp.first.push(this.Request(obj));
     } else {
-      this.lineUp.after.push(obj)
+      this.lineUp.after.push(obj);
     }
-    clearTimeout(this.lineUp.timeout)
+    clearTimeout(this.lineUp.timeout);
     this.lineUp.timeout = setTimeout(() => {
       Promise.all(this.lineUp.first)
         .then(() => {
           this.lineUp.after.forEach((params: any) => {
-            this.Request(params)
-          })
-          this.lineUp.first.length = 0
-          this.lineUp.after.length = 0
+            this.Request(params);
+          });
+          this.lineUp.first.length = 0;
+          this.lineUp.after.length = 0;
         })
         .catch(() => {
-          this.lineUp.first.length = 0
-          this.lineUp.after.length = 0
-        })
-      this.config.switch = false
-    }, 500)
+          this.lineUp.first.length = 0;
+          this.lineUp.after.length = 0;
+        });
+      this.config.switch = false;
+    }, 500);
   }
 
   Request(obj: any) {
-    obj = obj || {}
+    obj = obj || {};
     const {
       url = this.config.url,
       method = this.config.method,
@@ -200,9 +203,9 @@ class NewAxios {
       data = this.config.data,
       params = this.config.params,
       noErr = false,
-      cancelToken = this.config.cancelToken
-    } = obj
-    const tag: string = JSON.stringify(obj)
+      cancelToken = this.config.cancelToken,
+    } = obj;
+    const tag: string = JSON.stringify(obj);
     if (+isAntiShake === 1) {
       if (this.antiShake[tag]) {
         return Promise.reject({
@@ -210,12 +213,12 @@ class NewAxios {
           code: 3003,
           msg: `重复请求: ${method} ${url}`,
           params: obj,
-          type: 'error'
-        })
+          type: "error",
+        });
       }
-      this.antiShake[tag] = true
+      this.antiShake[tag] = true;
     }
-    this.errorHandling()
+    this.errorHandling();
     return new Promise((resolve, reject) => {
       if (!this.loadingSwitch) {
         // this.Loading = Loading.service({
@@ -225,7 +228,7 @@ class NewAxios {
         //   background: 'rgba(225, 225, 225, 0.3)'
         // })
       }
-      this.loadingSwitch++
+      this.loadingSwitch++;
       this.instance({
         baseURL: baseURL,
         withCredentials: withCredentials,
@@ -235,106 +238,131 @@ class NewAxios {
         headers: headers, // header体
         data: data, // body参数
         params: params, //  URL参数
-        cancelToken: cancelToken
+        cancelToken: cancelToken,
       })
         .then((resData: any) => {
           if (
             resData.request &&
             resData.request.response &&
-            typeof resData.request.response === 'string'
+            typeof resData.request.response === "string"
           ) {
-            const re = JSON.parse(resData.request.response)
+            let re = JSON.parse(resData.request.response);
             if (re.code === 500) {
-              reject(re)
+              reject(re);
             }
           }
-          this.loadingSwitch--
+          this.loadingSwitch--;
           if (!this.loadingSwitch) {
             // this.Loading.close()
           }
-          const { status } = resData.response || {}
-          const { code } = resData.data
-          const privilegeKeys = [401, 403]
-          if (privilegeKeys.includes(+status) || privilegeKeys.includes(+code)) {
-            const { pathname, origin } = location
-            localStorage.clear()
-            !pathname.includes('/login') && window.location.replace(`${origin}/login`)
+          const { status } = resData.response || {};
+          const { code } = resData.data;
+          const privilegeKeys = [401, 403];
+          if (
+            privilegeKeys.includes(+status) ||
+            privilegeKeys.includes(+code)
+          ) {
+            const { pathname, origin } = location;
+            localStorage.clear();
+            !pathname.includes("/login") &&
+              window.location.replace(`${origin}/login`);
           }
-          resData.response && this.getError(resData.response.data, prompt)
-          this.clearAntiShake(tag)
+          resData.response && this.getError(resData.response.data, prompt);
+          this.clearAntiShake(tag);
           if (noErr && resData.data.status !== 500) {
             resolve({
               res: resData.data,
-              disposition: resData.headers['content-disposition']
-            })
-            return
+              disposition: resData.headers["content-disposition"],
+            });
+            return;
           }
-          if ([200, 0].includes(resData.data.code) || resData.data.status === 200) {
-            resolve({ ...resData.headers, ...resData.data })
+          if (
+            [200, 0].includes(resData.data.code) ||
+            resData.data.status === 200
+          ) {
+            resolve({ ...resData.headers, ...resData.data });
           } else {
             this.config.message &&
               this.config.message({
                 showClose: true,
                 message: resData.data.msg || resData.data.message,
-                type: 'error'
-              })
-            reject(false)
+                type: "error",
+              });
+            reject(false);
           }
         })
         .catch((err: any) => {
-          this.loadingSwitch--
-          this.clearAntiShake(tag)
-          reject(err)
-          return err
-        })
-    })
+          this.loadingSwitch--;
+          this.clearAntiShake(tag);
+          reject(err);
+          return err;
+        });
+    });
   }
 
-  GetByUrl(url: string, params: any, baseURL: string, prompt: boolean, timeout: number) {
+  GetByUrl(
+    url: string,
+    params: any,
+    baseURL: string,
+    prompt: boolean,
+    timeout: number
+  ) {
     return this.Request({
-      method: 'get', // 请求方式
+      method: "get", // 请求方式
       url, // 请求路径
       timeout, // 请求超时
       prompt,
       baseURL,
       headers: {
-        'content-type': 'application/x-www-form-urlencoded'
+        "content-type": "application/x-www-form-urlencoded",
       }, // header体
-      params //  URL参数
-    })
+      params, //  URL参数
+    });
   }
 
-  PostByUrl(url: string, data: any, baseURL: string, prompt: boolean, timeout: number) {
-    data = JSON.stringify(data)
-    data = data.replace(/}|{|"/g, '')
-    data = data.replace(/:/g, '=')
-    data = data.replace(/,/g, '&')
-    data = data.replace(/null/g, '')
+  PostByUrl(
+    url: string,
+    data: any,
+    baseURL: string,
+    prompt: boolean,
+    timeout: number
+  ) {
+    data = JSON.stringify(data);
+    data = data.replace(/}|{|"/g, "");
+    data = data.replace(/:/g, "=");
+    data = data.replace(/,/g, "&");
+    data = data.replace(/null/g, "");
     return this.Request({
-      method: 'post', // 请求方式
+      method: "post", // 请求方式
       url, // 请求路径
       timeout, // 请求超时
       prompt,
       baseURL,
       headers: {
-        'content-type': 'application/x-www-form-urlencoded'
+        "content-type": "application/x-www-form-urlencoded",
       }, // header体
-      data //  URL参数
-    })
+      data, //  URL参数
+    });
   }
 
-  GetByBody(url: string, data: any, baseURL: string, prompt: boolean, timeout: number) {
+  GetByBody(
+    url: string,
+    data: any,
+    baseURL: string,
+    prompt: boolean,
+    timeout: number
+  ) {
     return this.Request({
-      method: 'get', // 请求方式
+      method: "get", // 请求方式
       url, // 请求路径
       timeout, // 请求超时
       prompt,
       baseURL,
       headers: {
-        'content-type': 'application/json'
+        "content-type": "application/json",
       }, // header体
-      data // body参数
-    })
+      data, // body参数
+    });
   }
 
   PostByBody(
@@ -346,44 +374,50 @@ class NewAxios {
     isAntiShake: boolean | string
   ) {
     return this.Request({
-      method: 'post', // 请求方式
+      method: "post", // 请求方式
       url, // 请求路径
       timeout, // 请求超时
       prompt,
       baseURL,
       isAntiShake,
       headers: {
-        'content-type': 'application/json'
+        "content-type": "application/json",
       }, // header体
-      data // body参数
-    })
+      data, // body参数
+    });
   }
 
-  PostFormDate(url: string, data: any, baseURL: string, prompt: boolean, timeout: number) {
-    const formData = new FormData()
+  PostFormDate(
+    url: string,
+    data: any,
+    baseURL: string,
+    prompt: boolean,
+    timeout: number
+  ) {
+    const formData = new FormData();
     Object.keys(data).forEach((key) => {
-      if (data[key] || data[key] === '' || data[key] === 0) {
-        if ({}.toString.call(data[key]) === '[object Array]') {
+      if (data[key] || data[key] === "" || data[key] === 0) {
+        if ({}.toString.call(data[key]) === "[object Array]") {
           data[key].forEach((item: any) => {
-            formData.append(key, item)
-          })
+            formData.append(key, item);
+          });
         } else {
-          formData.append(key, data[key])
+          formData.append(key, data[key]);
         }
       }
-    })
+    });
 
     return this.Request({
-      method: 'post',
+      method: "post",
       url,
       timeout, // 请求超时
       prompt,
       baseURL,
       headers: {
-        'Content-Type': 'multipart/form-data'
+        "Content-Type": "multipart/form-data",
       },
-      data: formData
-    })
+      data: formData,
+    });
   }
 
   PostFormDate2(
@@ -394,163 +428,190 @@ class NewAxios {
     prompt: boolean,
     timeout: number
   ) {
-    const formData = new FormData()
+    const formData = new FormData();
     Object.keys(data).forEach((key) => {
-      if (data[key] || data[key] === '' || data[key] === 0) {
-        if ({}.toString.call(data[key]) === '[object Array]') {
+      if (data[key] || data[key] === "" || data[key] === 0) {
+        if ({}.toString.call(data[key]) === "[object Array]") {
           data[key].forEach((item: any, j: any) => {
-            if ({}.toString.call(item) === '[object Object]') {
+            if ({}.toString.call(item) === "[object Object]") {
               Object.keys(item).forEach((val: any) => {
                 if (item[val]) {
-                  formData.append(`${attr}[${j}].${val}`, item[val])
+                  formData.append(`${attr}[${j}].${val}`, item[val]);
                 }
-              })
+              });
             } else {
-              formData.append(key, item)
+              formData.append(key, item);
             }
-          })
+          });
         } else {
-          formData.append(key, data[key])
+          formData.append(key, data[key]);
         }
       }
-    })
+    });
 
     return this.Request({
-      method: 'post',
+      method: "post",
       url,
       timeout, // 请求超时
       prompt,
       baseURL,
       headers: {
-        'Content-Type': 'multipart/form-data'
+        "Content-Type": "multipart/form-data",
       },
-      data: formData
-    })
+      data: formData,
+    });
   }
 
-  PostFormDate3(url: string, data: any, baseURL: string, prompt: boolean, timeout: number) {
-    const formData = new FormData()
+  PostFormDate3(
+    url: string,
+    data: any,
+    baseURL: string,
+    prompt: boolean,
+    timeout: number
+  ) {
+    const formData = new FormData();
     Object.keys(data).forEach((key) => {
-      if (data[key] || data[key] === '' || data[key] === 0) {
-        if ({}.toString.call(data[key]) === '[object Object]') {
-          formData.append(key, JSON.stringify(data[key]))
+      if (data[key] || data[key] === "" || data[key] === 0) {
+        if ({}.toString.call(data[key]) === "[object Object]") {
+          formData.append(
+            key,
+            JSON.stringify(data[key])
+          )
         } else {
-          formData.append(key, data[key])
+          formData.append(key, data[key]);
         }
       }
-    })
+    });
 
     return this.Request({
-      method: 'post',
+      method: "post",
       url,
       timeout, // 请求超时
       prompt,
       baseURL,
       headers: {
-        'Content-Type': 'multipart/form-data'
+        "Content-Type": "multipart/form-data",
       },
-      data: formData
-    })
+      data: formData,
+    });
   }
 
-  PostExport(url: string, data: any, baseURL: string, prompt: boolean, timeout: number) {
+  PostExport(
+    url: string,
+    data: any,
+    baseURL: string,
+    prompt: boolean,
+    timeout: number
+  ) {
     return this.Request({
-      method: 'post', // 请求方式
+      method: "post", // 请求方式
       url, // 请求路径
       timeout, // 请求超时
       prompt,
       baseURL,
       noErr: true,
       headers: {
-        'content-type': 'application/json;charset=utf-8',
-        bolb: true
+        "content-type": "application/json;charset=utf-8",
+        bolb: true,
       }, // header体
-      data // body参数
+      data, // body参数
     }).then(({ res, disposition }: any) => {
-      const name = disposition.split('"')[1]
+      const name = disposition.split('"')[1];
       const blob = new Blob([res], {
-        type: 'application/vnd.ms-excel;charset=utf-8'
-      })
+        type: "application/vnd.ms-excel;charset=utf-8",
+      });
 
-      if ('download' in document.createElement('a')) {
-        const eLink = document.createElement('a')
-        eLink.download = name || `${new Date().valueOf()}.xls`
-        eLink.style.display = 'none'
-        eLink.href = URL.createObjectURL(blob)
-        document.body.appendChild(eLink)
-        eLink.click()
-        URL.revokeObjectURL(eLink.href)
-        document.body.removeChild(eLink)
+      if ("download" in document.createElement("a")) {
+        const eLink = document.createElement("a");
+        eLink.download = name || `${new Date().valueOf()}.xls`;
+        eLink.style.display = "none";
+        eLink.href = URL.createObjectURL(blob);
+        document.body.appendChild(eLink);
+        eLink.click();
+        URL.revokeObjectURL(eLink.href);
+        document.body.removeChild(eLink);
       }
-      return res
-    })
+      return res;
+    });
   }
 
-  PostExportByUrl(url: string, params: any, baseURL: string, prompt: boolean, timeout: number) {
+  PostExportByUrl(
+    url: string,
+    params: any,
+    baseURL: string,
+    prompt: boolean,
+    timeout: number
+  ) {
     return this.Request({
-      method: 'post', // 请求方式
+      method: "post", // 请求方式
       url, // 请求路径
       timeout, // 请求超时
       prompt,
       baseURL,
       noErr: true,
       headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-        bolb: true
+        "content-type": "application/x-www-form-urlencoded",
+        bolb: true,
       }, // header体
       params
     }).then(({ res, disposition }: any) => {
-      const name = disposition.split('"')[1]
+      const name = disposition.split('"')[1];
       const blob = new Blob([res], {
-        type: 'application/vnd.ms-excel;charset=utf-8'
-      })
+        type: "application/vnd.ms-excel;charset=utf-8",
+      });
 
-      if ('download' in document.createElement('a')) {
-        const eLink = document.createElement('a')
-        eLink.download = decodeURI(name) || `${new Date().valueOf()}.xls`
-        eLink.style.display = 'none'
-        eLink.href = URL.createObjectURL(blob)
-        document.body.appendChild(eLink)
-        eLink.click()
-        URL.revokeObjectURL(eLink.href)
-        document.body.removeChild(eLink)
+      if ("download" in document.createElement("a")) {
+        const eLink = document.createElement("a");
+        eLink.download = decodeURI(name) || `${new Date().valueOf()}.xls`;
+        eLink.style.display = "none";
+        eLink.href = URL.createObjectURL(blob);
+        document.body.appendChild(eLink);
+        eLink.click();
+        URL.revokeObjectURL(eLink.href);
+        document.body.removeChild(eLink);
       }
-      return res
-    })
+      return res;
+    });
   }
 
-  GetExport(url: string, params: any, baseURL: string, prompt: boolean, timeout: number) {
+  GetExport(
+    url: string,
+    params: any,
+    baseURL: string,
+    prompt: boolean,
+    timeout: number
+  ) {
     return this.Request({
-      method: 'get', // 请求方式
+      method: "get", // 请求方式
       url, // 请求路径
       timeout, // 请求超时
       prompt,
       baseURL,
       noErr: true,
       headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-        bolb: true
+        "content-type": "application/x-www-form-urlencoded",
+        bolb: true,
       }, // header体
-      params // body参数
+      params, // body参数
     }).then(({ res, disposition }: any) => {
-      const name = disposition ? disposition.split('=')[1] : 'error'
+      const name = disposition ? disposition.split("=")[1] : 'error';
       const blob = new Blob([res], {
-        type: 'application/vnd.ms-excel;charset=utf-8'
-      })
+        type: "application/vnd.ms-excel;charset=utf-8",
+      });
 
-      if ('download' in document.createElement('a')) {
-        const eLink = document.createElement('a')
-        eLink.download = decodeURI(name) || `${new Date().valueOf()}.xls`
-        eLink.style.display = 'none'
-        eLink.href = URL.createObjectURL(blob)
-        document.body.appendChild(eLink)
-        eLink.click()
-        URL.revokeObjectURL(eLink.href)
-        document.body.removeChild(eLink)
+      if ("download" in document.createElement("a")) {
+        const eLink = document.createElement("a");
+        eLink.download = decodeURI(name) || `${new Date().valueOf()}.xls`;
+        eLink.style.display = "none";
+        eLink.href = URL.createObjectURL(blob);
+        document.body.appendChild(eLink);
+        eLink.click();
+        URL.revokeObjectURL(eLink.href);
+        document.body.removeChild(eLink);
       }
-      return res
-    })
+      return res;
+    });
   }
 }
 
-export default NewAxios
+export default NewAxios;
