@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '@/components/layout/index.vue'
-import { getLocal, setLocal } from '@/common/utils'
+import { LocalVue } from '@/common/utils'
 import { ElMessage } from 'element-plus'
 
 const router = createRouter({
@@ -27,6 +27,17 @@ const router = createRouter({
       ]
     },
     {
+      path: '/logs',
+      component: Layout,
+      children: [
+        {
+          path: 'Logs',
+          name: 'logs',
+          component: () => import('@/views/LogPage/index.vue')
+        }
+      ]
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('@/views/Login.vue'),
@@ -37,20 +48,20 @@ const router = createRouter({
   ]
 })
 // 路由拦截
-router.beforeEach((to, from, next) => {
-  if (to.path == '/login') {
-    localStorage.clear()
-    next()
-  } else {
-    // 获取 token
-    const token = getLocal('Authorization')
-    // token 不存在
-    if (token === null || token === '') {
-      ElMessage.error('Token不存在，请登录')
-      next('/login')
-    } else {
-      next()
-    }
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   if (to.path == '/login') {
+//     localStorage.clear()
+//     next()
+//   } else {
+//     // 获取 token
+//     const token = LocalVue.getLocal('Authorization')
+//     // token 不存在
+//     if (token === null || token === '') {
+//       ElMessage.error('Token不存在，请登录')
+//       next('/login')
+//     } else {
+//       next()
+//     }
+//   }
+// })
 export default router

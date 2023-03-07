@@ -5,7 +5,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "removeComments":true, 
+    "alwaysStrict": true
   },
 
   "references": [

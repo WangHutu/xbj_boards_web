@@ -1,6 +1,7 @@
 <template>
   <div>
-    <p>98</p>
+    <span>欢迎， </span>
+    <span class="userName">user</span>
   </div>
 </template>
 
@@ -9,3 +10,9 @@
 // const info = JSON.parse(getLocal('info'))
 // console.log(info)
 </script>
+
+<style scoped>
+.userName {
+  color: #409eff;
+}
+</style>

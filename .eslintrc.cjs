@@ -21,7 +21,7 @@ module.exports = {
     semi: ['error', 'never'],
     //强制使用单引号
     // quotes: ['error', 'single'],
-    indent: ['error', 2],
+    // indent: ['error', 2],
     'space-before-function-paren': 0,
     'eol-last': 0,
     'no-useless-escape': 'off',

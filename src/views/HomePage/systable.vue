@@ -59,3 +59,9 @@ const editHandle = (row:any) => {
   emit('showDialog', row)
 }
 </script>
+
+<style scoped>
+a {
+  margin-right: 10px;
+}
+</style>

@@ -62,7 +62,7 @@
 import { reactive, ref } from 'vue'
 import { UserService } from '@/api/api'
 import { useRouter } from 'vue-router'
-import { setLocal } from '@/common/utils'
+import { LocalVue } from '@/common/utils'
 
 const router = useRouter()
 
@@ -71,7 +71,7 @@ const ruleFormLoginRef = ref()
 
 const tabState = ref('Login')
 
-const validatePass = (rule, value, callback) => {
+const validatePass = (rule: any, value: any, callback: any) => {
   if (ruleForm.password === '') {
     callback(new Error('Please input the password'))
   } else {
@@ -82,7 +82,7 @@ const validatePass = (rule, value, callback) => {
     callback()
   }
 }
-const validatePass2 = (rule, value, callback) => {
+const validatePass2 = (rule: any, value: any, callback: any) => {
   if (ruleForm.passwordAgin === '') {
     callback(new Error('Please input the password again'))
   } else if (ruleForm.passwordAgin !== ruleForm.password) {
@@ -110,31 +110,35 @@ const rules = reactive({
 })
 
 // change tab
-const changeTab = (state:any) => {
+const changeTab = (state: any) => {
   tabState.value = state
   resetForm(ruleFormRef.value)
   resetForm(ruleFormLoginRef.value)
 }
 
 // submit
-const submitForm = (formEl) => {
+const submitForm = (formEl: any) => {
   if (!formEl) return
-  formEl.validate((valid:any) => {
+  formEl.validate((valid: any) => {
     if (valid) {
       console.log('submit!')
       if (tabState.value === 'Login') {
-        console.log(ruleForm)
-        UserService.userLoginApi(ruleForm).then((res:any) => {
+        console.log(ruleForm,'登陆参数')
+        UserService.userLoginApi(ruleForm).then((res: any) => {
           if (res.code == '200') {
             if (res.data.info) {
-              setLocal('info', res.data.info)
-              setLocal('Authorization', res.data.token)
+              LocalVue.setLocal('info', res.data.info)
+              LocalVue.setLocal('Authorization', res.data.token)
             }
             router.push('/')
           }
+        }).catch((err:any) => {
+          console.log(err)
+          
         })
       } else {
-        UserService.userRegisterApi(ruleForm).then((res:any) => {
+        console.log(ruleForm,'注册参数')
+        UserService.userRegisterApi(ruleForm).then((res: any) => {
           if (res.code == '200') {
             changeTab('Login')
           }
@@ -148,7 +152,7 @@ const submitForm = (formEl) => {
 }
 
 // clean form-data
-const resetForm = (formEl) => {
+const resetForm = (formEl: any) => {
   if (!formEl) return
   formEl.resetFields()
 }

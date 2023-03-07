@@ -37,12 +37,12 @@ import ContentVue from './Content.vue'
 }
 
 .navbar {
-  background-color: var(--color-background-content);
+  background-color: #fff;
   position: fixed;
   top: 0;
   left: 210px;
   width: 100%;
-  /* padding: 0 100px; */
+  padding: 0 20px;
   height: 50px;
   line-height: 50px;
   box-shadow: 0 1px 3px hsl(0deg 0% 7% / 10%);

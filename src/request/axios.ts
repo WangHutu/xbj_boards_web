@@ -1,46 +1,60 @@
-import axios from 'axios';
-import { showMessage } from "./status";   // 引入状态码文件
-import { ElMessage } from 'element-plus'  // 引入el 提示框，这个项目里用什么组件库这里引什么
+import axios from 'axios'
+import { showMessage } from './status' // 引入状态码文件
+import { ElMessage } from 'element-plus' // 引入el 提示框，这个项目里用什么组件库这里引什么
+import { LocalVue } from '@/common/utils'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 // 设置接口超时时间
-axios.defaults.timeout = 60000;
+axios.defaults.timeout = 60000
+
+// 白名单
+const whiteUrls: any = ['/login', '/type', '/']
 
 // 请求地址，这里是动态赋值的的环境变量，下一篇会细讲，这里跳过
 // @ts-ignore
-axios.defaults.baseURL = import.meta.env.VITE_API_DOMAIN;
+axios.defaults.baseURL = '/api'
 
 //http request 拦截器
 axios.interceptors.request.use(
-  config => {
-    // 配置请求头
-    config.headers = {
-      //'Content-Type':'application/x-www-form-urlencoded',   // 传参方式表单
-      'Content-Type': 'application/json;charset=UTF-8',        // 传参方式json
-      'token': '80c483d59ca86ad0393cf8a98416e2a1'              // 这里自定义配置，这里传的是token
-    };
-    return config;
+  (config) => {
+    const token = LocalVue.getLocal('Authorization')
+    // config.headers['Content-Type'] = 'application/x-www-form-urlencoded' // 传参方式表单
+    config.headers['Content-Type'] = 'application/json;charset=UTF-8'
+    if (!whiteUrls.includes(config.url)) {
+      if (!token) {
+        router.push('/login')
+      } else {
+        config.headers['Authorization'] = token
+      }
+    }
+    return config
   },
-  error => {
-    return Promise.reject(error);
+  (error) => {
+    return Promise.reject(error)
   }
-);
+)
 
 //http response 拦截器
 axios.interceptors.response.use(
-  response => {
-    return response;
-  },
-  error => {
-    const { response } = error;
-    if (response) {
-      // 请求已发出，但是不在2xx的范围
-      showMessage(response.status);           // 传入响应码，匹配响应码对应信息
-      return Promise.reject(response.data);
-    } else {
-      ElMessage.warning('网络连接异常,请稍后再试!');
+  (response) => {
+    if (typeof response.data !== 'object') {
+      ElMessage.error('服务端异常！')
+      return Promise.reject(response)
     }
+    if (response.data.code != 200) {
+      ElMessage.error(showMessage(response.status)) // 传入响应码，匹配响应码对应信息
+      return Promise.reject(response.data)
+    }
+    if (response.data.message) ElMessage.success(response.data.message)
+    return response.data
+  },
+  (error) => {
+    ElMessage.error(error.message)
+    return Promise.reject(error)
   }
-);
+)
 
 // 封装 GET POST 请求并导出
 export function request(url = '', params = {}, type = 'POST') {
@@ -60,10 +74,12 @@ export function request(url = '', params = {}, type = 'POST') {
       })
     }
     //处理返回
-    promise.then(res => {
-      resolve(res)
-    }).catch(err => {
-      reject(err)
-    })
+    promise
+      .then((res) => {
+        resolve(res)
+      })
+      .catch((err) => {
+        reject(err)
+      })
   })
 }
