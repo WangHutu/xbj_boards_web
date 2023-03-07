@@ -9,9 +9,6 @@ const router = useRouter()
 // 设置接口超时时间
 axios.defaults.timeout = 60000
 
-// 白名单
-const whiteUrls: any = ['/login', '/type', '/']
-
 // 请求地址，这里是动态赋值的的环境变量，下一篇会细讲，这里跳过
 // @ts-ignore
 axios.defaults.baseURL = '/api'
@@ -19,16 +16,18 @@ axios.defaults.baseURL = '/api'
 //http request 拦截器
 axios.interceptors.request.use(
   (config) => {
-    const token = LocalVue.getLocal('Authorization')
+    // const token = LocalVue.getLocal('Authorization')
     // config.headers['Content-Type'] = 'application/x-www-form-urlencoded' // 传参方式表单
     config.headers['Content-Type'] = 'application/json;charset=UTF-8'
-    if (!whiteUrls.includes(config.url)) {
-      if (!token) {
-        router.push('/login')
-      } else {
-        config.headers['Authorization'] = token
-      }
-    }
+    // if (!whiteUrls.includes(config.url)) {
+    //   console.log('ihj')
+      
+    //   if (!token) {
+    //     router.push('/login')
+    //   } else {
+    //     config.headers['Authorization'] = token
+    //   }
+    // }
     return config
   },
   (error) => {
