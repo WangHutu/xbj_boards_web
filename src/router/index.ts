@@ -37,20 +37,20 @@ const router = createRouter({
   ]
 })
 // 路由拦截
-// router.beforeEach((to, from, next) => {
-//   if (to.path == '/login') {
-//     localStorage.clear()
-//     next()
-//   } else {
-//     // 获取 token
-//     const token = getLocal('Authorization')
-//     // token 不存在
-//     if (token === null || token === '') {
-//       ElMessage.error('Token不存在，请登录')
-//       next('/login')
-//     } else {
-//       next()
-//     }
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  if (to.path == '/login') {
+    localStorage.clear()
+    next()
+  } else {
+    // 获取 token
+    const token = getLocal('Authorization')
+    // token 不存在
+    if (token === null || token === '') {
+      ElMessage.error('Token不存在，请登录')
+      next('/login')
+    } else {
+      next()
+    }
+  }
+})
 export default router
