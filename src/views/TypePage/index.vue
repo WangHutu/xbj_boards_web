@@ -11,6 +11,7 @@
               clearable
               @input="change('type', $event)"
               @keyup.enter="searchHandle"
+              @clear="clearHandle()"
             />
           </el-col>
           <el-col :span="2" style="text-align: right">
@@ -19,19 +20,16 @@
         </el-row>
       </div>
       <el-table :data="tableData" stripe border style="width: 100%">
-        <el-table-column prop="type" label="Type" min-width="150" />
+        <el-table-column prop="typeName" label="Type" min-width="150" />
         <el-table-column prop="remark" label="Remark" min-width="180" />
       </el-table>
-      <sysdialog
-        ref="sysdialogRef"
-        v-model:dialog-form-visible="dialogFormVisible"
-      ></sysdialog>
+      <sysdialog ref="sysdialogRef" v-model:dialog-form-visible="dialogFormVisible"></sysdialog>
     </div>
   </el-scrollbar>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, customRef } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import sysdialog from './sysdialog.vue'
 import { Boards } from '@/api/api'
@@ -44,21 +42,33 @@ const dialogFormVisible = ref(false)
 const showDialog = (data: object) => {
   sysdialogRef.value?.dilogInit(data)
 }
+
 const searchHandle = () => {
   getTypeList(selectType.value)
+}
+const clearHandle = () => {
+  getTypeList('')
 }
 const change = (val: String, event: any) => {
   if (val === 'type') {
     selectType.value.typeName = event
+    let timer:any = null
+    if(timer != null) {
+      clearTimeout(timer)
+      timer = null
+    }
+    timer = setTimeout(searchHandle, 800)
+    
   }
 }
 
-const getTypeList = (data:any) => {
+const getTypeList = (data: any) => {
   console.log(data, 'data')
-  Boards.getTypeList(data).then((res:any) => {
+  Boards.getTypeList(data).then((res: any) => {
+    // console.log(res, 'res')
     if (res.code == '200') {
       if (res.data) {
-        tableData.value = res.data
+        tableData.value = res.data.typeInfo
       }
     }
   })

@@ -1,10 +1,10 @@
 import axios from 'axios'
 import { showMessage } from './status' // 引入状态码文件
 import { ElMessage } from 'element-plus' // 引入el 提示框，这个项目里用什么组件库这里引什么
-import { LocalVue } from '@/common/utils'
-import { useRouter } from 'vue-router'
+// import { LocalVue } from '@/common/utils'
+// import { useRouter } from 'vue-router'
 
-const router = useRouter()
+// const router = useRouter()
 
 // 设置接口超时时间
 axios.defaults.timeout = 60000
@@ -21,7 +21,7 @@ axios.interceptors.request.use(
     config.headers['Content-Type'] = 'application/json;charset=UTF-8'
     // if (!whiteUrls.includes(config.url)) {
     //   console.log('ihj')
-      
+
     //   if (!token) {
     //     router.push('/login')
     //   } else {
@@ -37,7 +37,8 @@ axios.interceptors.request.use(
 
 //http response 拦截器
 axios.interceptors.response.use(
-  (response) => {
+  (response:any) => {
+    // console.log(response, 'response')
     if (typeof response.data !== 'object') {
       ElMessage.error('服务端异常！')
       return Promise.reject(response)
