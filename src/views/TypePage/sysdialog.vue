@@ -1,32 +1,28 @@
 <template>
   <el-dialog
     :model-value="dialogFormVisible"
-    title="Shipping address"
+    :title="dialogTitle"
     :close-on-click-modal="false"
     :show-close="false"
     width="600px"
   >
-    <el-form :model="form">
-      <el-form-item label="Type: " :label-width="formLabelWidth">
-        <el-input v-model="form.type" autocomplete="off" placeholder="Please input" />
-      </el-form-item>
-      <el-form-item label="" :label-width="formLabelWidth">
-        <el-switch
-          :model-value="form.status === 'False'"
-          class="mb-2"
-          style="--el-switch-on-color: #13ce66"
-          active-text="occupy"
-          inactive-text="vacant"
+    <el-form :model="formData" ref="ruleFormRef" :rules="rules" :label-width="formLabelWidth">
+      <el-form-item label="Type: " prop="typeName">
+        <el-input
+          v-model="formData.typeName"
+          autocomplete="off"
+          :disabled="dialogTitle == 'Edit Type'"
+          placeholder="Please input"
         />
       </el-form-item>
-      <el-form-item label="Remark: ">
-        <el-input v-model="form.remark" type="textarea" placeholder="Please input" />
+      <el-form-item label="Remark: " prop="remark">
+        <el-input v-model="formData.remark" type="textarea" placeholder="Please input" />
       </el-form-item>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="onCloseHandle()">Cancel</el-button>
-        <el-button type="primary" @click="onCloseHandle()"> Confirm </el-button>
+        <el-button @click="onCloseHandle(ruleFormRef)">Cancel</el-button>
+        <el-button type="primary" @click="submitDialog(ruleFormRef)"> Confirm </el-button>
       </span>
     </template>
   </el-dialog>
@@ -34,41 +30,74 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { Boards } from '@/api/api'
+import type { FormInstance, FormRules } from 'element-plus'
 interface Dialogform {
-  type: string
-  ip: string
-  status: string
+  typeName: string
   remark: string
 }
+const dialogTitle = ref<string>('New Type')
+const ruleFormRef = ref<FormInstance>()
 const formLabelWidth = '60px'
 const dialogFormVisible = ref(false)
-// const emit = defineEmits(['update:dialogFormVisible'])
-let form = reactive<Dialogform>({
-  type: '',
-  ip: '',
-  status: '',
+const formData = reactive<Dialogform>({
+  typeName: '',
   remark: ''
 })
-const onCloseHandle = (): void => {
+const rules = reactive<FormRules>({
+  typeName: [{ required: true, message: 'Please input Type name', trigger: 'blur' }]
+})
+const onCloseHandle = (formEl: FormInstance | undefined) => {
+  dialogTitle.value = 'New Type'
+  if (!formEl) return
+  formEl.resetFields()
   dialogFormVisible.value = false
-  form = {
-    type: '',
-    ip: '',
-    status: '',
-    remark: ''
-  }
-  // emit('update:dialogFormVisible', false)
 }
-const dilogInit = (data: any): void => {
+const submitDialog = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  await formEl.validate(async (valid, fields) => {
+    if (valid) {
+      await submitHandle()
+      onCloseHandle(formEl)
+    } else {
+      console.log('error submit!', fields)
+    }
+  })
+}
+const submitHandle = () => {
+  if (dialogTitle.value == 'Edit Type') {
+    Boards.updateTypeList(formData).then((res: any) => {
+      console.log(res, 'res')
+      if (res.code == 200) {
+        emit('getTypeList', '')
+      }
+    })
+  } else {
+    Boards.insertTypeList(formData).then((res: any) => {
+      console.log(res, 'res')
+      if (res.code == 200) {
+        emit('getTypeList', '')
+      }
+    })
+  }
+}
+const dilogInit = (data?: any): void => {
   if (data) {
-    form = JSON.parse(JSON.stringify(data))
+    const { typeName, remark } = JSON.parse(JSON.stringify(data))
+    formData['typeName'] = typeName
+    formData['remark'] = remark
+    dialogTitle.value = 'Edit Type'
+  } else {
+    formData['typeName'] = ''
+    formData['remark'] = ''
   }
   dialogFormVisible.value = true
-  // emit('update:dialogFormVisible', true)
 }
 defineExpose({
   dilogInit
 })
+
+const emit = defineEmits(['getTypeList'])
 </script>
 
 <style scoped>

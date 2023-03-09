@@ -44,7 +44,11 @@ axios.interceptors.response.use(
       return Promise.reject(response)
     }
     if (response.data.code != 200) {
-      ElMessage.error(showMessage(response.status)) // 传入响应码，匹配响应码对应信息
+      if(response.data.code == 205) {
+        ElMessage.error("数据已存在")
+      } else {
+        ElMessage.error(showMessage(response.status)) // 传入响应码，匹配响应码对应信息
+      }
       return Promise.reject(response.data)
     }
     if (response.data.message) ElMessage.success(response.data.message)

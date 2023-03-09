@@ -11,59 +11,87 @@
               clearable
               @input="change('type', $event)"
               @keyup.enter="searchHandle"
-              @clear="clearHandle()"
             />
           </el-col>
           <el-col :span="2" style="text-align: right">
-            <el-button type="primary" @click="showDialog">ADD</el-button>
+            <el-button type="primary" @click="showDialog()">ADD</el-button>
           </el-col>
         </el-row>
       </div>
-      <el-table :data="tableData" stripe border style="width: 100%">
+      <el-table v-loading="loading" :data="tableData" stripe border style="width: 100%">
         <el-table-column prop="typeName" label="Type" min-width="150" />
         <el-table-column prop="remark" label="Remark" min-width="180" />
+        <el-table-column label="operate " width="150px" align="center">
+          <template #default="scope">
+            <el-link type="primary" :underline="false" @click="showDialog(scope.row)">编辑</el-link>
+            <el-link type="primary" :underline="false" @click="delRow(scope.row)">删除</el-link>
+          </template>
+        </el-table-column>
       </el-table>
-      <sysdialog ref="sysdialogRef" v-model:dialog-form-visible="dialogFormVisible"></sysdialog>
+      <sysdialog
+        @getTypeList="getTypeList"
+        ref="sysdialogRef"
+        v-model:dialog-form-visible="dialogFormVisible"
+      ></sysdialog>
     </div>
   </el-scrollbar>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, customRef } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
+import { ElMessageBox } from 'element-plus'
 import sysdialog from './sysdialog.vue'
 import { Boards } from '@/api/api'
 const selectType = ref({
   typeName: ''
 })
+const loading = ref(true)
+const row = reactive({
+  typeName: '',
+  remark: ''
+})
 const tableData = ref([])
 const sysdialogRef = ref<InstanceType<typeof sysdialog>>()
 const dialogFormVisible = ref(false)
-const showDialog = (data: object) => {
+const showDialog = (data?: any) => {
   sysdialogRef.value?.dilogInit(data)
+}
+const delRow = (data: any) => {
+  const { typeName, remark } = data
+  row['typeName'] = typeName
+  row['remark'] = remark
+  ElMessageBox.confirm(`是否要删除【 ${data.typeName} 】?`, 'Warning', {
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Cancel',
+    type: 'warning'
+  }).then(() => {
+    Boards.delTypeList(row).then((res:any)=>{
+      console.log(res, 'res')
+      if (res.code == 200) {
+        getTypeList('')
+      }
+    })
+  })
 }
 
 const searchHandle = () => {
   getTypeList(selectType.value)
 }
-const clearHandle = () => {
-  getTypeList('')
-}
 const change = (val: String, event: any) => {
   if (val === 'type') {
     selectType.value.typeName = event
-    let timer:any = null
-    if(timer != null) {
+    let timer: any = null
+    if (timer != null) {
       clearTimeout(timer)
       timer = null
     }
-    timer = setTimeout(searchHandle, 800)
-    
+    timer = setTimeout(searchHandle, 300)
   }
 }
 
 const getTypeList = (data: any) => {
-  console.log(data, 'data')
+  loading.value = true
   Boards.getTypeList(data).then((res: any) => {
     // console.log(res, 'res')
     if (res.code == '200') {
@@ -71,10 +99,18 @@ const getTypeList = (data: any) => {
         tableData.value = res.data.typeInfo
       }
     }
+    setTimeout(()=>{
+        loading.value = false
+      },300)
+  }).catch(()=>{
+    setTimeout(()=>{
+        loading.value = false
+      },300)
   })
 }
 
 onMounted(() => {
+  loading.value = true
   getTypeList(selectType.value)
 })
 </script>
@@ -84,5 +120,8 @@ onMounted(() => {
   height: 50px;
   line-height: 50px;
   margin-bottom: 10px;
+}
+a {
+  margin-right: 10px;
 }
 </style>
