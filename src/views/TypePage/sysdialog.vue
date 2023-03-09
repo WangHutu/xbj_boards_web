@@ -40,6 +40,7 @@ const dialogTitle = ref<string>('New Type')
 const ruleFormRef = ref<FormInstance>()
 const formLabelWidth = '60px'
 const dialogFormVisible = ref(false)
+const emit = defineEmits(['getTypeList'])
 const formData = reactive<Dialogform>({
   typeName: '',
   remark: ''
@@ -97,7 +98,6 @@ defineExpose({
   dilogInit
 })
 
-const emit = defineEmits(['getTypeList'])
 </script>
 
 <style scoped>

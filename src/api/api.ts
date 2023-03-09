@@ -37,4 +37,8 @@ export class Boards {
   static async delTypeList(params: any) {
     return request('/delTypeList', params, 'post')
   }
+
+  static async getBoardList(params: any) {
+    return request('/getBoardList', params, 'get')
+  }
 }

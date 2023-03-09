@@ -14,9 +14,9 @@
             >
               <el-option
                 v-for="item in types"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key="item.typeName"
+                :label="item.typeName"
+                :value="item.typeName"
               />
             </el-select>
           </el-col>
@@ -42,7 +42,7 @@
               placeholder="Enter ip to search"
               clearable
               @input="change('ip', $event)"
-              @keyup.enter="searchIpHandle"
+              @keyup.enter="searchhandle"
           /></el-col>
           <el-col :span="2" style="text-align: right">
             <el-button type="primary" @click="showDialog">ADD</el-button>
@@ -51,6 +51,7 @@
       </div>
       <systable v-model:tableData="tableData" @showDialog="showDialog"></systable>
       <sysdialog
+        @getBoardsList="getBoardsList"
         ref="sysdialogRef"
         v-model:dialog-form-visible="dialogFormVisible"
         v-model:types="types"
@@ -60,8 +61,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
+import { Boards } from '@/api/api'
 import systable from './systable.vue'
 import sysdialog from './sysdialog.vue'
 
@@ -74,291 +76,11 @@ const selectType = ref([])
 const selectStatus = ref([])
 const searchIp = ref<string>('')
 const dialogFormVisible = ref(false)
-const tableData = ref([
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: '',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'False',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: '',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'False',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: '',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'False',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: '',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'False',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: '',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'False',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: '',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'False',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: '',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'False',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: '',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'False',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: '',
-    status: 'True',
-    remark: '备注'
-  },
-  {
-    type: 'kv260',
-    ip: '10.176.179.103',
-    user: 'runfengw',
-    status: 'False',
-    remark: '备注'
-  }
-])
-const types = ref([
-  {
-    value: 'kv260',
-    label: 'kv260'
-  },
-  {
-    value: 'vck190',
-    label: 'vck190'
-  },
-  {
-    value: 'vek280',
-    label: 'vek280'
-  },
-  {
-    value: 'zcu104',
-    label: 'zcu104'
-  },
-  {
-    value: 'zcu102',
-    label: 'zcu102'
-  }
-])
+const tableData = ref([])
+const types = ref([])
 const status = [
-  {
-    value: 'vacant',
-    label: 'vacant'
-  },
-  {
-    value: 'occupy',
-    label: 'occupy'
-  }
+  { value: 'vacant', label: 'vacant' },
+  { value: 'occupy', label: 'occupy' }
 ]
 const searchForm = ref<Homeform>({
   type: [],
@@ -366,12 +88,7 @@ const searchForm = ref<Homeform>({
   status: ''
 })
 const searchhandle = () => {
-  console.log(searchForm.value)
-}
-const searchIpHandle = () => {
-  searchForm.value.ip = searchIp.value
-  console.log(searchForm.value)
-  searchhandle()
+  getBoardsList(searchForm.value)
 }
 const sysdialogRef = ref<InstanceType<typeof sysdialog>>()
 const showDialog = (data: object) => {
@@ -386,8 +103,39 @@ const change = (val: String, event: any) => {
     searchhandle()
   } else if (val === 'ip') {
     searchIp.value = event
+    searchForm.value.ip = event
+    let timer: any = null
+    if (timer != null) {
+      clearTimeout(timer)
+      timer = null
+    }
+    timer = setTimeout(searchhandle, 300)
   }
 }
+const getTypeList = (data: any) => {
+  Boards.getTypeList(data).then((res: any) => {
+    if (res.code == '200') {
+      if (res.data) {
+        types.value = res.data.typeInfo
+      }
+    }
+  })
+}
+
+const getBoardsList = (data: any) => {
+  Boards.getBoardList(data).then((res: any) => {
+    if (res.code == '200') {
+      if (res.data) {
+        tableData.value = res.data.boardInfo
+      }
+    }
+  })
+}
+
+onMounted(() => {
+  getTypeList('')
+  getBoardsList('')
+})
 </script>
 
 <style scoped>
