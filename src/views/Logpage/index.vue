@@ -1,3 +1,164 @@
 <template>
-  <p>这是日志页面</p>
+  <el-scrollbar>
+    <div class="home">
+      <div class="home_head">
+        <el-row>
+          <el-col :span="8" style="padding-right: 20px">
+            <el-select
+              v-model="selectType"
+              filterable
+              multiple
+              placeholder="Select Type"
+              style="width: 100%"
+              @change="change('type', $event)"
+            >
+              <el-option
+                v-for="item in types"
+                :key="item.typeName"
+                :label="item.typeName"
+                :value="item.typeName"
+              />
+            </el-select>
+          </el-col>
+          <el-col :span="6" style="padding-right: 20px"
+            ><el-select
+              v-model="operate"
+              clearable
+              placeholder="Select Status"
+              style="width: 100%"
+              @change="change('operate', $event)"
+            >
+              <el-option
+                v-for="item in operateList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              /> </el-select
+          ></el-col>
+          <el-col :span="5" style="padding-right: 10px"
+            ><el-input
+              :suffix-icon="Search"
+              :model-value="searchIp"
+              placeholder="Enter ip to search"
+              clearable
+              @input="change('ip', $event)"
+              @keyup.enter="searchhandle"
+          /></el-col>
+          <el-col :span="5" style="padding-right: 10px"
+            ><el-input
+              :suffix-icon="Search"
+              :model-value="searchUser"
+              placeholder="Enter user to search"
+              clearable
+              @input="change('user', $event)"
+              @keyup.enter="searchhandle"
+          /></el-col>
+        </el-row>
+      </div>
+      <el-table :data="tableData" stripe border style="width: 100%">
+        <el-table-column prop="time" label="Time" min-width="180" />
+        <el-table-column prop="user" label="User" min-width="150" />
+        <el-table-column prop="operate" label="Operate" min-width="120" />
+        <el-table-column prop="type" label="Type" min-width="120" />
+        <el-table-column prop="newType" label="newType" min-width="150" />
+        <el-table-column prop="ip" label="Ip" min-width="150" />
+        <el-table-column prop="newIp" label="newIp" min-width="150" />
+        
+      </el-table>
+    </div>
+  </el-scrollbar>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { Search } from '@element-plus/icons-vue'
+import { Boards } from '@/api/api'
+
+interface Homeform {
+  type: Array<string>
+  ip: string
+  operate: string
+  user: string
+}
+const selectType = ref([])
+const operate = ref([])
+const searchIp = ref<string>('')
+const searchUser = ref<string>('')
+  
+const tableData = ref([])
+const types = ref([])
+const operateList = [
+  { value: 'add', label: 'add' },
+  { value: 'update', label: 'update' },
+  { value: 'del', label: 'del' },
+  { value: 'occ', label: 'occ' }
+]
+const searchForm = ref<Homeform>({
+  type: [],
+  ip: '',
+  operate: '',
+  user: ''
+})
+const searchhandle = () => {
+  getLogList(searchForm.value)
+}
+const change = (val: String, event: any) => {
+  if (val === 'type') {
+    searchForm.value.type = event.join(',')
+    searchhandle()
+  } else if (val === 'operate') {
+    searchForm.value.operate = event
+    searchhandle()
+  } else if (val === 'ip') {
+    searchIp.value = event
+    searchForm.value.ip = event
+    let timer: any = null
+    if (timer != null) {
+      clearTimeout(timer)
+      timer = null
+    }
+    timer = setTimeout(searchhandle, 300)
+  } else if (val === 'user') {
+    searchUser.value = event
+    searchForm.value.user = event
+    let timer: any = null
+    if (timer != null) {
+      clearTimeout(timer)
+      timer = null
+    }
+    timer = setTimeout(searchhandle, 300)
+  }
+}
+const getTypeList = (data: any) => {
+  Boards.getTypeList(data).then((res: any) => {
+    if (res.code == '200') {
+      if (res.data) {
+        types.value = res.data.typeInfo
+      }
+    }
+  })
+}
+
+const getLogList = (data: any) => {
+  Boards.getLogList(data).then((res: any) => {
+    if (res.code == '200') {
+      if (res.data) {
+        tableData.value = res.data.boardInfo
+      }
+    }
+  })
+}
+
+onMounted(() => {
+  getTypeList('')
+  getLogList('')
+})
+</script>
+
+<style scoped>
+.home .home_head {
+  height: 50px;
+  line-height: 50px;
+  margin-bottom: 10px;
+}
+</style>

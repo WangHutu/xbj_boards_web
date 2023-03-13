@@ -41,4 +41,20 @@ export class Boards {
   static async getBoardList(params: any) {
     return request('/getBoardList', params, 'get')
   }
+
+  static async insertBoardList(params: any) {
+    return request('/insertBoardList', params, 'post')
+  }
+
+  static async updateBoardList(params: any) {
+    return request('/updateBoardList', params, 'post')
+  }
+
+  static async delBoardList(params: any) {
+    return request('/delBoardList', params, 'post')
+  }
+
+  static async getLogList(params: any) {
+    return request('/getLogList', params, 'get')
+  }
 }

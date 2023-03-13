@@ -45,11 +45,11 @@
               @keyup.enter="searchhandle"
           /></el-col>
           <el-col :span="2" style="text-align: right">
-            <el-button type="primary" @click="showDialog">ADD</el-button>
+            <el-button type="primary" @click="showDialog()">ADD</el-button>
           </el-col>
         </el-row>
       </div>
-      <systable v-model:tableData="tableData" @showDialog="showDialog"></systable>
+      <systable v-model:tableData="tableData" @showDialog="showDialog" @getBoardsList="getBoardsList"></systable>
       <sysdialog
         @getBoardsList="getBoardsList"
         ref="sysdialogRef"
@@ -79,8 +79,8 @@ const dialogFormVisible = ref(false)
 const tableData = ref([])
 const types = ref([])
 const status = [
-  { value: 'vacant', label: 'vacant' },
-  { value: 'occupy', label: 'occupy' }
+  { value: 'vacant', label: '空闲' },
+  { value: 'occupy', label: '占用' }
 ]
 const searchForm = ref<Homeform>({
   type: [],
@@ -91,12 +91,12 @@ const searchhandle = () => {
   getBoardsList(searchForm.value)
 }
 const sysdialogRef = ref<InstanceType<typeof sysdialog>>()
-const showDialog = (data: object) => {
+const showDialog = (data?: object) => {
   sysdialogRef.value?.dilogInit(data)
 }
 const change = (val: String, event: any) => {
   if (val === 'type') {
-    searchForm.value.type = event
+    searchForm.value.type = event.join(',')
     searchhandle()
   } else if (val === 'status') {
     searchForm.value.status = event

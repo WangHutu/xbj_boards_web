@@ -12,8 +12,8 @@
           <el-option
             :key="index"
             v-for="(item, index) in types"
-            :label="item.label"
-            :value="item.value"
+            :label="item.typeName"
+            :value="item.typeName"
           />
         </el-select>
       </el-form-item>
@@ -22,11 +22,11 @@
       </el-form-item>
       <el-form-item label="">
         <el-switch
-          :model-value="formData.status === 'False'"
+          v-model="state"
           class="mb-2"
           style="--el-switch-on-color: #13ce66"
-          active-text="occupy"
-          inactive-text="vacant"
+          active-text="占用"
+          inactive-text="空闲"
         />
       </el-form-item>
       <el-form-item label="Remark: ">
@@ -52,25 +52,38 @@ defineProps<{
 interface Dialogform {
   type: string
   ip: string
+  oldIp: string
   status: string
   remark: string
 }
-const ruleFormRef = ref<FormInstance>()
-const emit = defineEmits(['getBoardsList'])
-const dialogTitle = ref<string>('New Board')
-const rules = reactive<FormRules>({
-  type: [{ required: true, message: 'Please select Type', trigger: 'blur' }],
-  ip: [{ required: true, message: 'Please input Ip', trigger: 'blur' }]
-})
-
-const dialogFormVisible = ref(false)
-// const emit = defineEmits(['update:dialogFormVisible'])
 const formData = reactive<Dialogform>({
   type: '',
   ip: '',
-  status: '',
+  oldIp: '',
+  status: '空闲',
   remark: ''
 })
+const state = ref(false)
+const ruleFormRef = ref<FormInstance>()
+const emit = defineEmits(['getBoardsList'])
+const dialogTitle = ref<string>('New Board')
+const validatePass = (rule: any, value: any, callback: any) => {
+  const reg =
+    /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+  if (formData.ip === '') {
+    callback(new Error('Please input the ip'))
+  } else if (reg.test(value) === false) {
+    callback(new Error('请输入正确格式IP,如: 11.11.11.11)'))
+  } else {
+    callback()
+  }
+}
+const rules = reactive<FormRules>({
+  type: [{ required: true, message: 'Please select Type', trigger: 'blur' }],
+  ip: [{ required: true, trigger: 'blur', validator: validatePass }]
+})
+
+const dialogFormVisible = ref(false)
 const onCloseHandle = (formEl: FormInstance | undefined) => {
   dialogTitle.value = 'New Board'
   if (!formEl) return
@@ -81,28 +94,37 @@ const submitDialog = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      await submitHandle()
-      onCloseHandle(formEl)
+      await submitHandle(formEl)
+      // onCloseHandle(formEl)
     } else {
       console.log('error submit!', fields)
     }
   })
 }
-const submitHandle = () => {
-  if (dialogTitle.value == 'Edit Type') {
-    Boards.updateTypeList(formData).then((res: any) => {
+const submitHandle = (formEl: FormInstance | undefined) => {
+  console.log(dialogTitle.value, 'dialogTitle.value')
+
+  formData['status'] = state.value ? 'occupy' : 'vacant'
+  if (dialogTitle.value == 'Edit Board') {
+    Boards.updateBoardList(formData).then((res: any) => {
       console.log(res, 'res')
       if (res.code == 200) {
         emit('getBoardsList', '')
+        onCloseHandle(formEl)
       }
     })
   } else {
-    Boards.insertTypeList(formData).then((res: any) => {
-      console.log(res, 'res')
-      if (res.code == 200) {
-        emit('getBoardsList', '')
-      }
-    })
+    Boards.insertBoardList(formData)
+      .then((res: any) => {
+        console.log(res, 'res')
+        if (res.code == 200) {
+          emit('getBoardsList', '')
+          onCloseHandle(formEl)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 }
 const dilogInit = (data?: any): void => {
@@ -110,14 +132,18 @@ const dilogInit = (data?: any): void => {
     const { type, ip, status, remark } = JSON.parse(JSON.stringify(data))
     formData['type'] = type
     formData['ip'] = ip
+    formData['oldIp'] = ip
     formData['status'] = status
     formData['remark'] = remark
+    state.value = formData['status'] === 'occupy'
     dialogTitle.value = 'Edit Board'
   } else {
     formData['type'] = ''
     formData['ip'] = ''
-    formData['status'] = ''
+    formData['oldIp'] = ''
+    formData['status'] = 'vacant'
     formData['remark'] = ''
+    dialogTitle.value = 'New Board'
   }
   dialogFormVisible.value = true
 }

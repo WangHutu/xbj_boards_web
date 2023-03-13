@@ -52,6 +52,8 @@ axios.interceptors.response.use(
     if (response.data.code != 200) {
       if(response.data.code == 205) {
         ElMessage.error("数据已存在")
+      } else if(response.data.code == 206) {
+        ElMessage.error("IP已存在")
       } else {
         ElMessage.error(showMessage(response.status)) // 传入响应码，匹配响应码对应信息
       }
