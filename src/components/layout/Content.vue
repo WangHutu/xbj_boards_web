@@ -17,7 +17,7 @@ import { RouterView } from 'vue-router'
 import { markRaw } from 'vue'
 import A from '@/views/HomePage/index.vue'
 import B from '@/views/TypePage/index.vue'
-import C from '@/views/LogPage/log.vue'
+import C from '@/views/log.vue'
 const AVue = markRaw(A)
 const BVue = markRaw(B)
 const CVue = markRaw(C)

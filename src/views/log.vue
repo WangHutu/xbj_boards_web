@@ -111,11 +111,7 @@
     </div>
   </el-scrollbar>
 </template>
-<script>
-export default {
-  name: "log"
-}
-</script>
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
