@@ -55,15 +55,40 @@
           /></el-col>
         </el-row>
       </div>
-      <el-table :data="tableData" stripe border style="width: 100%">
-        <el-table-column prop="time" label="Time" min-width="180" />
-        <el-table-column prop="user" label="User" min-width="150" />
+      <el-table
+        :data="tableData"
+        stripe
+        border
+        style="width: 100%"
+        :default-sort="{ prop: 'time', order: 'ascending' }"
+      >
+        <el-table-column prop="time" sortable label="Time" width="180" />
+        <el-table-column prop="user" label="User" width="115" />
         <el-table-column prop="operate" label="Operate" min-width="120" />
-        <el-table-column prop="type" label="Type" min-width="120" />
-        <el-table-column prop="newType" label="newType" min-width="150" />
+        <el-table-column prop="type" label="Type" width="120" />
+        <el-table-column prop="newType" label="newType" width="120">
+          <template #default="scope">
+            <span :class="scope.row.operate === 'update' && scope.row.newType !== scope.row.type ? 'importClass' : ''">
+              {{ scope.row.newType }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="ip" label="Ip" min-width="150" />
-        <el-table-column prop="newIp" label="newIp" min-width="150" />
-        
+        <el-table-column prop="newIp" label="newIp" min-width="150" >
+          <template #default="scope">
+            <span :class="scope.row.operate === 'update' && scope.row.newIp !== scope.row.ip ? 'importClass' : ''">
+              {{ scope.row.newIp }}
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="remark" label="remark" min-width="150" />
+        <el-table-column prop="newRemark" label="newRemark" min-width="150" >
+          <template #default="scope">
+            <span :class="scope.row.operate === 'update' && scope.row.newRemark !== scope.row.remark ? 'importClass' : ''">
+              {{ scope.row.newRemark }}
+            </span>
+          </template>
+        </el-table-column>
       </el-table>
     </div>
   </el-scrollbar>
@@ -84,7 +109,7 @@ const selectType = ref([])
 const operate = ref([])
 const searchIp = ref<string>('')
 const searchUser = ref<string>('')
-  
+
 const tableData = ref([])
 const types = ref([])
 const operateList = [
@@ -160,5 +185,9 @@ onMounted(() => {
   height: 50px;
   line-height: 50px;
   margin-bottom: 10px;
+}
+.importClass {
+  color: red;
+  font-weight: bold;
 }
 </style>

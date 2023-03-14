@@ -48,6 +48,7 @@ const selectType = ref({
 })
 const loading = ref(true)
 const row = reactive({
+  id: '',
   typeName: '',
   remark: ''
 })
@@ -58,7 +59,8 @@ const showDialog = (data?: any) => {
   sysdialogRef.value?.dilogInit(data)
 }
 const delRow = (data: any) => {
-  const { typeName, remark } = data
+  const { typeName, remark, id } = data
+  row['id'] = id
   row['typeName'] = typeName
   row['remark'] = remark
   ElMessageBox.confirm(`是否要删除【 ${data.typeName} 】?`, 'Warning', {

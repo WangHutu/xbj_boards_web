@@ -50,6 +50,7 @@ defineProps<{
   types: Array<any>
 }>()
 interface Dialogform {
+  id: string
   type: string
   ip: string
   oldIp: string
@@ -57,6 +58,7 @@ interface Dialogform {
   remark: string
 }
 const formData = reactive<Dialogform>({
+  id: '',
   type: '',
   ip: '',
   oldIp: '',
@@ -129,7 +131,8 @@ const submitHandle = (formEl: FormInstance | undefined) => {
 }
 const dilogInit = (data?: any): void => {
   if (data) {
-    const { type, ip, status, remark } = JSON.parse(JSON.stringify(data))
+    const { type, ip, status, remark, id } = JSON.parse(JSON.stringify(data))
+    formData['id'] = id
     formData['type'] = type
     formData['ip'] = ip
     formData['oldIp'] = ip
@@ -138,6 +141,7 @@ const dilogInit = (data?: any): void => {
     state.value = formData['status'] === 'occupy'
     dialogTitle.value = 'Edit Board'
   } else {
+    formData['id'] = ''
     formData['type'] = ''
     formData['ip'] = ''
     formData['oldIp'] = ''

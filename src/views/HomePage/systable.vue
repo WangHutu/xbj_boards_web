@@ -62,13 +62,15 @@ const editHandle = (row:any) => {
   emit('showDialog', row)
 }
 const row = reactive({
+  id: '',
   type: '',
   ip: '',
   status: '空闲',
   remark: ''
 })
 const delRow = (data: any) => {
-  const { type, ip, status, remark } = data
+  const { type, ip, status, remark, id } = data
+  row['id'] = id
   row['type'] = type
   row['ip'] = ip
   row['status'] = status
