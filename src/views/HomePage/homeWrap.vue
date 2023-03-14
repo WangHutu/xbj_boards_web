@@ -72,12 +72,16 @@ interface Homeform {
   ip: string
   status: string
 }
+interface TypeObject {
+  remark: string
+  typeName: string
+}
 const selectType = ref([])
 const selectStatus = ref([])
 const searchIp = ref<string>('')
 const dialogFormVisible = ref(false)
 const tableData = ref([])
-const types = ref([])
+const types = ref<Array<TypeObject>>([])
 const status = [
   { value: 'vacant', label: '空闲' },
   { value: 'occupy', label: '占用' }

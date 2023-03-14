@@ -1,7 +1,7 @@
 <template>
   <el-scrollbar>
-    <div class="home">
-      <div class="home_head">
+    <div class="log">
+      <div class="log_head">
         <el-row>
           <el-col :span="8" style="padding-right: 20px">
             <el-select
@@ -68,23 +68,41 @@
         <el-table-column prop="type" label="Type" width="120" />
         <el-table-column prop="newType" label="newType" width="120">
           <template #default="scope">
-            <span :class="scope.row.operate === 'update' && scope.row.newType !== scope.row.type ? 'importClass' : ''">
+            <span
+              :class="
+                scope.row.operate === 'update' && scope.row.newType !== scope.row.type
+                  ? 'importClass'
+                  : ''
+              "
+            >
               {{ scope.row.newType }}
             </span>
           </template>
         </el-table-column>
         <el-table-column prop="ip" label="Ip" min-width="150" />
-        <el-table-column prop="newIp" label="newIp" min-width="150" >
+        <el-table-column prop="newIp" label="newIp" min-width="150">
           <template #default="scope">
-            <span :class="scope.row.operate === 'update' && scope.row.newIp !== scope.row.ip ? 'importClass' : ''">
+            <span
+              :class="
+                scope.row.operate === 'update' && scope.row.newIp !== scope.row.ip
+                  ? 'importClass'
+                  : ''
+              "
+            >
               {{ scope.row.newIp }}
             </span>
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="remark" min-width="150" />
-        <el-table-column prop="newRemark" label="newRemark" min-width="150" >
+        <el-table-column prop="newRemark" label="newRemark" min-width="150">
           <template #default="scope">
-            <span :class="scope.row.operate === 'update' && scope.row.newRemark !== scope.row.remark ? 'importClass' : ''">
+            <span
+              :class="
+                scope.row.operate === 'update' && scope.row.newRemark !== scope.row.remark
+                  ? 'importClass'
+                  : ''
+              "
+            >
               {{ scope.row.newRemark }}
             </span>
           </template>
@@ -93,7 +111,11 @@
     </div>
   </el-scrollbar>
 </template>
-
+<script>
+export default {
+  name: "log"
+}
+</script>
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
@@ -105,13 +127,17 @@ interface Homeform {
   operate: string
   user: string
 }
+interface TypeObject {
+  remark: string
+  typeName: string
+}
 const selectType = ref([])
 const operate = ref([])
 const searchIp = ref<string>('')
 const searchUser = ref<string>('')
 
 const tableData = ref([])
-const types = ref([])
+const types = ref<Array<TypeObject>>([])
 const operateList = [
   { value: 'add', label: 'add' },
   { value: 'update', label: 'update' },
@@ -181,7 +207,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.home .home_head {
+.log .log_head {
   height: 50px;
   line-height: 50px;
   margin-bottom: 10px;
