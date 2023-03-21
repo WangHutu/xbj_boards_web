@@ -64,8 +64,14 @@
         :default-sort="{ prop: 'time', order: 'ascending' }"
       >
         <el-table-column prop="time" sortable label="Time" width="180" />
-        <el-table-column prop="user" label="User" width="115" />
-        <el-table-column prop="operate" label="Operate" min-width="120" />
+        <el-table-column prop="user" label="User" width="90" />
+        <el-table-column prop="operate" label="Operate" min-width="120">
+          <template #default="scope">
+            <span :class="scope.row.operate === 'del' ? 'delClass' : ''">
+              {{ scope.row.operate }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="type" label="Type" width="120" />
         <el-table-column prop="newType" label="newType" width="120">
           <template #default="scope">
@@ -192,23 +198,25 @@ const getTypeList = (data: any) => {
 
 const getLogList = (data: any) => {
   loading.value = true
-  Boards.getLogList(data).then((res: any) => {
-    if (res.code == '200') {
-      if (res.data) {
-        tableData.value = res.data.boardInfo
-        if (res.data.user) {
+  Boards.getLogList(data)
+    .then((res: any) => {
+      if (res.code == '200') {
+        if (res.data) {
+          tableData.value = res.data.boardInfo
+          if (res.data.user) {
             LocalVue.setLocal('user', res.data.user)
           }
+        }
       }
-    }
-    setTimeout(()=>{
+      setTimeout(() => {
         loading.value = false
-      },300)
-  }).catch(()=>{
-    setTimeout(()=>{
+      }, 300)
+    })
+    .catch(() => {
+      setTimeout(() => {
         loading.value = false
-      },300)
-  })
+      }, 300)
+    })
 }
 
 onMounted(() => {
@@ -223,7 +231,7 @@ onMounted(() => {
   line-height: 50px;
   margin-bottom: 10px;
 }
-.importClass {
+.importClass, .delClass {
   color: red;
   font-weight: bold;
 }
