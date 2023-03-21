@@ -9,6 +9,10 @@ export class LocalVue {
   static setLocal = (name: any, value: any) => {
     localStorage.setItem(name, JSON.stringify(value))
   }
+
+  static clearLocal = () => {
+    localStorage.clear()
+  }
 }
 
 export class DebounceAndthrottle {

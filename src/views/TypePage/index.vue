@@ -14,14 +14,14 @@
             />
           </el-col>
           <el-col :span="2" style="text-align: right">
-            <el-button type="primary" @click="showDialog()">ADD</el-button>
+            <el-button v-if="stateBtn" type="primary" @click="showDialog()">ADD</el-button>
           </el-col>
         </el-row>
       </div>
       <el-table v-loading="loading" :data="tableData" stripe border style="width: 100%">
         <el-table-column prop="typeName" label="Type" min-width="150" />
         <el-table-column prop="remark" label="Remark" min-width="180" />
-        <el-table-column label="operate " width="150px" align="center">
+        <el-table-column v-if="stateBtn" label="operate " width="150px" align="center">
           <template #default="scope">
             <el-link type="primary" :underline="false" @click="showDialog(scope.row)">编辑</el-link>
             <el-link type="primary" :underline="false" @click="delRow(scope.row)">删除</el-link>
@@ -43,10 +43,16 @@ import { Search } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 import sysdialog from './sysdialog.vue'
 import { Boards } from '@/api/api'
+import { LocalVue } from '@/common/utils'
+import { useCounterStore } from '@/stores/counter'
+import { ElMessage } from 'element-plus'
+
 const selectType = ref({
   typeName: ''
 })
 const loading = ref(true)
+const userList = useCounterStore()
+const stateBtn = ref(false)
 const row = reactive({
   id: '',
   typeName: '',
@@ -94,11 +100,19 @@ const change = (val: String, event: any) => {
 
 const getTypeList = (data: any) => {
   loading.value = true
+  LocalVue.clearLocal()
   Boards.getTypeList(data).then((res: any) => {
     // console.log(res, 'res')
     if (res.code == '200') {
       if (res.data) {
         tableData.value = res.data.typeInfo
+        if (res.data.user) {
+            LocalVue.setLocal('user', res.data.user)
+          } else {
+            ElMessage.error('没有获取到当前用户！')
+          }
+          console.log(LocalVue.getLocal('user'))
+          stateBtn.value = userList.count.includes(res.data.user)
       }
     }
     setTimeout(()=>{

@@ -57,6 +57,7 @@
       </div>
       <el-table
         :data="tableData"
+        v-loading="loading"
         stripe
         border
         style="width: 100%"
@@ -116,6 +117,7 @@
 import { ref, onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { Boards } from '@/api/api'
+import { LocalVue } from '@/common/utils'
 
 interface Homeform {
   type: Array<string>
@@ -127,6 +129,7 @@ interface TypeObject {
   remark: string
   typeName: string
 }
+const loading = ref(true)
 const selectType = ref([])
 const operate = ref([])
 const searchIp = ref<string>('')
@@ -138,7 +141,8 @@ const operateList = [
   { value: 'add', label: 'add' },
   { value: 'update', label: 'update' },
   { value: 'del', label: 'del' },
-  { value: 'occ', label: 'occ' }
+  { value: 'occupancy', label: 'occupancy' },
+  { value: 'release', label: 'release' }
 ]
 const searchForm = ref<Homeform>({
   type: [],
@@ -187,12 +191,23 @@ const getTypeList = (data: any) => {
 }
 
 const getLogList = (data: any) => {
+  loading.value = true
   Boards.getLogList(data).then((res: any) => {
     if (res.code == '200') {
       if (res.data) {
         tableData.value = res.data.boardInfo
+        if (res.data.user) {
+            LocalVue.setLocal('user', res.data.user)
+          }
       }
     }
+    setTimeout(()=>{
+        loading.value = false
+      },300)
+  }).catch(()=>{
+    setTimeout(()=>{
+        loading.value = false
+      },300)
   })
 }
 

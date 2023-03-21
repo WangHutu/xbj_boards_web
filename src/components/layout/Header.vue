@@ -1,14 +1,13 @@
 <template>
   <div>
     <span>欢迎， </span>
-    <span class="userName">user</span>
+    <span class="userName">{{ user }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
-// import { getLocal } from '../common/utils'
-// const info = JSON.parse(getLocal('info'))
-// console.log(info)
+import { LocalVue } from '@/common/utils'
+const user = LocalVue.getLocal('user')?.split('"').join('')
 </script>
 
 <style scoped>

@@ -45,11 +45,17 @@
               @keyup.enter="searchhandle"
           /></el-col>
           <el-col :span="2" style="text-align: right">
-            <el-button type="primary" @click="showDialog()">ADD</el-button>
+            <el-button v-if="stateBtn" type="primary" @click="showDialog()">ADD</el-button>
           </el-col>
         </el-row>
       </div>
-      <systable v-model:tableData="tableData" @showDialog="showDialog" @getBoardsList="getBoardsList"></systable>
+      <systable
+        v-model:tableData="tableData"
+        v-model:loading="loading"
+        v-model:stateBtn='stateBtn'
+        @showDialog="showDialog"
+        @getBoardsList="getBoardsList"
+      ></systable>
       <sysdialog
         @getBoardsList="getBoardsList"
         ref="sysdialogRef"
@@ -66,6 +72,9 @@ import { Search } from '@element-plus/icons-vue'
 import { Boards } from '@/api/api'
 import systable from './systable.vue'
 import sysdialog from './sysdialog.vue'
+import { LocalVue } from '@/common/utils'
+import { useCounterStore } from '@/stores/counter'
+import { ElMessage } from 'element-plus'
 
 interface Homeform {
   type: Array<string>
@@ -76,6 +85,9 @@ interface TypeObject {
   remark: string
   typeName: string
 }
+const userList = useCounterStore()
+const loading = ref(true)
+const stateBtn = ref(false)
 const selectType = ref([])
 const selectStatus = ref([])
 const searchIp = ref<string>('')
@@ -127,13 +139,32 @@ const getTypeList = (data: any) => {
 }
 
 const getBoardsList = (data: any) => {
-  Boards.getBoardList(data).then((res: any) => {
-    if (res.code == '200') {
-      if (res.data) {
-        tableData.value = res.data.boardInfo
+  loading.value = true
+  LocalVue.clearLocal()
+  Boards.getBoardList(data)
+    .then((res: any) => {
+      if (res.code == '200') {
+        if (res.data) {
+          tableData.value = res.data.boardInfo
+          if (res.data.user) {
+            LocalVue.setLocal('user', res.data.user)
+          } else {
+            ElMessage.error('没有获取到当前用户！')
+          }
+          console.log(LocalVue.getLocal('user'))
+          stateBtn.value = userList.count.includes(res.data.user)
+          
+        }
       }
-    }
-  })
+      setTimeout(() => {
+        loading.value = false
+      }, 300)
+    })
+    .catch(() => {
+      setTimeout(() => {
+        loading.value = false
+      }, 300)
+    })
 }
 
 onMounted(() => {
