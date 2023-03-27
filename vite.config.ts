@@ -20,8 +20,9 @@ export default defineConfig({
     host: "0.0.0.0",
     proxy: {
       "/api": {
-        // target: "http://127.0.0.1:5000", // 后台接口
-        target: "http://117.50.174.56:5000", // 后台接口
+        // target: "http://127.0.0.1:5000", // dev接口
+        // target: "http://117.50.174.56:5000", // ucloud 服务器
+        target: "http://10.176.178.2:5000",
         changeOrigin: true,
         secure: false, // 如果是https接口，需要配置这个参数
         ws: false, //websocket支持
