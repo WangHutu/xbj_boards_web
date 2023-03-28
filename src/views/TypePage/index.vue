@@ -14,7 +14,7 @@
             />
           </el-col>
           <el-col :span="2" style="text-align: right">
-            <el-button v-if="stateBtn" type="primary" @click="showDialog()">ADD</el-button>
+            <el-button v-if="stateBtn" type="primary" @click="showDialog()">添加</el-button>
           </el-col>
         </el-row>
       </div>
