@@ -23,7 +23,15 @@
     <el-table-column prop="remark" label="Remark" min-width="180" />
     <el-table-column label="operate " width="150px" align="center">
       <template #default="scope">
+        <el-link
+          v-if="userName == scope.row.user"
+          type="primary"
+          :underline="false"
+          @click="operaHandle(scope.row, 0)"
+          >释放</el-link
+        >
         <el-tooltip
+          v-else
           class="box-item"
           :disabled="scope.row.status === 'True'"
           effect="dark"
@@ -31,14 +39,6 @@
           placement="top-start"
         >
           <el-link
-            v-if="userName == scope.row.user"
-            type="primary"
-            :underline="false"
-            @click="operaHandle(scope.row, 0)"
-            >释放</el-link
-          >
-          <el-link
-            v-else
             type="primary"
             :underline="false"
             :disabled="scope.row.status !== 'vacant'"
@@ -81,7 +81,7 @@ defineProps<{
   stateBtn: Boolean
 }>()
 const emit = defineEmits(['showDialog', 'getBoardsList'])
-const userName:string | undefined = LocalVue.getLocal('user')?.split('"').join('')
+const userName: string | undefined = LocalVue.getLocal('user')?.split('"').join('')
 const editHandle = (row: any) => {
   emit('showDialog', row)
 }
@@ -93,42 +93,41 @@ const row = reactive({
   remark: '',
   user: ''
 })
-const operaHandle = (data: any, opereState:any) => {
+const operaHandle = (data: any, opereState: any) => {
   const { type, ip, remark, id } = data
   row['id'] = id
   row['type'] = type
   row['ip'] = ip
-  row['status'] = opereState ? "occupy" : "vacant"
+  row['status'] = opereState ? 'occupy' : 'vacant'
   row['remark'] = remark
   row['user'] = userName ? userName : ''
-  if(opereState) {
+  if (opereState) {
     ElMessageBox.confirm(`Hi ${userName},  是否要占用IP为【 ${data.ip} 】的 ${data.type}?`, 'Tip', {
-    confirmButtonText: 'OK',
-    cancelButtonText: 'Cancel',
-    type: 'info'
-  }).then(() => {
-    Boards.occBoard(row).then((res: any) => {
-      console.log(res, 'res')
-      if (res.code == 200) {
-        emit('getBoardsList', '')
-      }
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'info'
+    }).then(() => {
+      Boards.occBoard(row).then((res: any) => {
+        console.log(res, 'res')
+        if (res.code == 200) {
+          emit('getBoardsList', '')
+        }
+      })
     })
-  })
   } else {
     ElMessageBox.confirm(`Hi ${userName},  是否要释放IP为【 ${data.ip} 】的 ${data.type}?`, 'Tip', {
-    confirmButtonText: 'OK',
-    cancelButtonText: 'Cancel',
-    type: 'info'
-  }).then(() => {
-    Boards.reBoard(row).then((res: any) => {
-      console.log(res, 'res')
-      if (res.code == 200) {
-        emit('getBoardsList', '')
-      }
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'info'
+    }).then(() => {
+      Boards.reBoard(row).then((res: any) => {
+        console.log(res, 'res')
+        if (res.code == 200) {
+          emit('getBoardsList', '')
+        }
+      })
     })
-  })
   }
-  
 }
 const delRow = (data: any) => {
   const { type, ip, status, remark, id } = data
