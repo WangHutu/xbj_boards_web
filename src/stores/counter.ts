@@ -5,6 +5,7 @@ export const useCounterStore = defineStore('counter', () => {
   const count = ref<Array<string>>([
     'ubuntu',
     'root',
+    'rfwang',
     'runfengw', 'yanjunz', 'huizhang', 'qingz'])
 
   return { count }

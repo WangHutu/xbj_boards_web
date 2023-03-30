@@ -41,7 +41,7 @@ import ContentVue from './Content.vue'
   position: fixed;
   top: 0;
   left: 210px;
-  width: 100%;
+  width: calc(100vw - 250px);
   padding: 0 20px;
   height: 50px;
   line-height: 50px;

@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-parsing-error -->
 <template>
   <el-table v-loading="loading" :data="tableData" stripe border style="width: 100%">
     <el-table-column prop="type" label="Type" width="120" />
@@ -24,7 +23,7 @@
     <el-table-column label="operate " width="150px" align="center">
       <template #default="scope">
         <el-link
-          v-if="userName == scope.row.user"
+          v-if="scope.row.status !== 'vacant'"
           type="primary"
           :underline="false"
           @click="operaHandle(scope.row, 0)"
@@ -42,7 +41,7 @@
             type="primary"
             :underline="false"
             :disabled="scope.row.status !== 'vacant'"
-            @click="operaHandle(scope.row, 1)"
+            @click="occhandle(scope.row)"
             >占用</el-link
           >
         </el-tooltip>
@@ -61,13 +60,19 @@
       </template>
     </el-table-column>
   </el-table>
+  <loginDialog
+    @getBoardsList="reloadBoardsList"
+    @occhandle="operaHandle"
+    ref="loginDialogRef"
+  ></loginDialog>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { ElMessageBox } from 'element-plus'
 import { Boards } from '@/api/api'
 import { LocalVue } from '@/common/utils'
+import loginDialog from '@/components/loginDialog.vue'
 // defineProps({
 //   tableData: {
 //     type: Array,
@@ -81,7 +86,7 @@ defineProps<{
   stateBtn: Boolean
 }>()
 const emit = defineEmits(['showDialog', 'getBoardsList'])
-const userName: string | undefined = LocalVue.getLocal('user')?.split('"').join('')
+const userName = ref<string | undefined>(LocalVue.getLocal('user')?.split('"').join(''))
 const editHandle = (row: any) => {
   emit('showDialog', row)
 }
@@ -93,37 +98,59 @@ const row = reactive({
   remark: '',
   user: ''
 })
-const operaHandle = (data: any, opereState: any) => {
+const loginDialogRef = ref<InstanceType<typeof loginDialog>>()
+const occhandle = (data: any) => {
   const { type, ip, remark, id } = data
   row['id'] = id
   row['type'] = type
   row['ip'] = ip
-  row['status'] = opereState ? 'occupy' : 'vacant'
   row['remark'] = remark
-  row['user'] = userName ? userName : ''
+  loginDialogRef.value?.loginInit()
+}
+const reloadBoardsList = () => {
+  emit('getBoardsList', '')
+}
+const operaHandle = (data: any, opereState: any) => {
   if (opereState) {
-    ElMessageBox.confirm(`Hi ${userName},  是否要占用IP为【 ${data.ip} 】的 ${data.type}?`, 'Tip', {
-      confirmButtonText: 'OK',
-      cancelButtonText: 'Cancel',
-      type: 'info'
-    }).then(() => {
+    row['status'] = 'occupy'
+    row['user'] = data
+    ElMessageBox.confirm(
+      `Hi ${data},  是否要占用IP为【 ${data.ip} 】的 ${data.type}?`,
+      'Tip',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'info'
+      }
+    ).then(() => {
       Boards.occBoard(row).then((res: any) => {
         console.log(res, 'res')
         if (res.code == 200) {
-          emit('getBoardsList', '')
+          reloadBoardsList()
         }
       })
     })
   } else {
-    ElMessageBox.confirm(`Hi ${userName},  是否要释放IP为【 ${data.ip} 】的 ${data.type}?`, 'Tip', {
-      confirmButtonText: 'OK',
-      cancelButtonText: 'Cancel',
-      type: 'info'
-    }).then(() => {
+    const { type, ip, remark, id } = data
+    row['id'] = id
+    row['type'] = type
+    row['ip'] = ip
+    row['status'] = 'vacant'
+    row['remark'] = remark
+    row['user'] = ''
+    ElMessageBox.confirm(
+      `是否要释放IP为【 ${data.ip} 】的 ${data.type}?`,
+      'Tip',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'info'
+      }
+    ).then(() => {
       Boards.reBoard(row).then((res: any) => {
         console.log(res, 'res')
         if (res.code == 200) {
-          emit('getBoardsList', '')
+          reloadBoardsList()
         }
       })
     })
@@ -144,7 +171,7 @@ const delRow = (data: any) => {
     Boards.delBoardList(row).then((res: any) => {
       console.log(res, 'res')
       if (res.code == 200) {
-        emit('getBoardsList', '')
+        reloadBoardsList()
       }
     })
   })

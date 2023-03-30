@@ -62,6 +62,7 @@
         v-model:dialog-form-visible="dialogFormVisible"
         v-model:types="types"
       ></sysdialog>
+      <loginDialog @getBoardsList="getBoardsList" ref="loginDialogRef"></loginDialog>
     </div>
   </el-scrollbar>
 </template>
@@ -72,6 +73,7 @@ import { Search } from '@element-plus/icons-vue'
 import { Boards } from '@/api/api'
 import systable from './systable.vue'
 import sysdialog from './sysdialog.vue'
+import loginDialog from '@/components/loginDialog.vue'
 import { LocalVue } from '@/common/utils'
 import { useCounterStore } from '@/stores/counter'
 import { ElMessage } from 'element-plus'
@@ -106,7 +108,9 @@ const searchForm = ref<Homeform>({
 const searchhandle = () => {
   getBoardsList(searchForm.value)
 }
+const userName = ref<string | undefined>(LocalVue.getLocal('user')?.split('"').join(''))
 const sysdialogRef = ref<InstanceType<typeof sysdialog>>()
+const loginDialogRef = ref<InstanceType<typeof loginDialog>>()
 const showDialog = (data?: object) => {
   sysdialogRef.value?.dilogInit(data)
 }
@@ -140,20 +144,20 @@ const getTypeList = (data: any) => {
 
 const getBoardsList = (data: any) => {
   loading.value = true
-  LocalVue.clearLocal()
+  LocalVue.removeLocal('terminal_user')
   Boards.getBoardList(data)
     .then((res: any) => {
       if (res.code == '200') {
         if (res.data) {
           tableData.value = res.data.boardInfo
           if (res.data.user) {
-            LocalVue.setLocal('user', res.data.user)
+            LocalVue.setLocal('terminal_user', res.data.user)
           } else {
-            ElMessage.error('没有获取到当前用户！')
+            ElMessage.error('没有获取到终端用户！')
           }
-          console.log(LocalVue.getLocal('user'))
-          stateBtn.value = userList.count.includes(res.data.user)
-          
+          console.log('终端用户：', LocalVue.getLocal('terminal_user'))
+          const name = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
+          stateBtn.value = userList.count.includes(name)
         }
       }
       setTimeout(() => {
@@ -170,6 +174,9 @@ const getBoardsList = (data: any) => {
 onMounted(() => {
   getTypeList('')
   getBoardsList('')
+  // if (!userName.value) {
+  //   loginDialogRef.value?.loginInit()
+  // }
 })
 </script>
 

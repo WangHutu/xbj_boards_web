@@ -10,6 +10,10 @@ export class LocalVue {
     localStorage.setItem(name, JSON.stringify(value))
   }
 
+  static removeLocal = (name: any) => {
+    localStorage.removeItem(name)
+  }
+
   static clearLocal = () => {
     localStorage.clear()
   }

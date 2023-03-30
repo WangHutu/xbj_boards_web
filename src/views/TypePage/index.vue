@@ -100,19 +100,20 @@ const change = (val: String, event: any) => {
 
 const getTypeList = (data: any) => {
   loading.value = true
-  LocalVue.clearLocal()
+  LocalVue.removeLocal('terminal_user')
   Boards.getTypeList(data).then((res: any) => {
     // console.log(res, 'res')
     if (res.code == '200') {
       if (res.data) {
         tableData.value = res.data.typeInfo
         if (res.data.user) {
-            LocalVue.setLocal('user', res.data.user)
+            LocalVue.setLocal('terminal_user', res.data.user)
           } else {
-            ElMessage.error('没有获取到当前用户！')
+            ElMessage.error('没有获取到终端用户！')
           }
-          console.log(LocalVue.getLocal('user'))
-          stateBtn.value = userList.count.includes(res.data.user)
+          console.log('终端用户：', LocalVue.getLocal('terminal_user'))
+          const name = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
+          stateBtn.value = userList.count.includes(name)
       }
     }
     setTimeout(()=>{
