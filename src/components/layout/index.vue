@@ -53,6 +53,6 @@ import ContentVue from './Content.vue'
   margin: 50px auto 30px;
   padding: 20px;
   width: calc(100% - 70px);
-  min-width: 1024px;
+  min-width: 1000px;
 }
 </style>
