@@ -27,6 +27,7 @@ const loginUser = () => {
 }
 
 const exitUser = () => {
+  LocalVue.removeLocal('user')
   LocalVue.removeLocal('adminUser')
   reload()
 }

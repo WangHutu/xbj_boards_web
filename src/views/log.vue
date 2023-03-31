@@ -100,17 +100,17 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="remark" label="remark" min-width="150" />
-        <el-table-column prop="newRemark" label="newRemark" min-width="150">
+        <el-table-column prop="number" label="number" min-width="150" />
+        <el-table-column prop="newNumber" label="newNumber" min-width="150">
           <template #default="scope">
             <span
               :class="
-                scope.row.operate === 'update' && scope.row.newRemark !== scope.row.remark
+                scope.row.operate === 'update' && scope.row.newNumber !== scope.row.number
                   ? 'importClass'
                   : ''
               "
             >
-              {{ scope.row.newRemark }}
+              {{ scope.row.newNumber }}
             </span>
           </template>
         </el-table-column>

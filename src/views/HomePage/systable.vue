@@ -101,13 +101,36 @@ const row = reactive({
 })
 const loginDialogRef = ref<InstanceType<typeof loginDialog>>()
 const occhandle = (data: any) => {
+  const adminUser = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
+  console.log('adminUser', adminUser)
   const { type, ip, remark, id, number } = data
   row['id'] = id
   row['type'] = type
   row['ip'] = ip
   row['number'] = number
   row['remark'] = remark
-  loginDialogRef.value?.loginInit()
+  row['status'] = 'occupy'
+  row['user'] = adminUser
+  if (adminUser) {
+    ElMessageBox.confirm(
+      `Hi ${adminUser},  是否要占用IP为【 ${row['ip']} 】的 ${row['type']}?`,
+      'Tip',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'info'
+      }
+    ).then(() => {
+      Boards.occBoard(row).then((res: any) => {
+        console.log(res, 'res')
+        if (res.code == 200) {
+          reloadBoardsList()
+        }
+      })
+    })
+  } else {
+    loginDialogRef.value?.loginInit()
+  }
 }
 const reloadBoardsList = () => {
   emit('getBoardsList', '')
@@ -116,29 +139,12 @@ const operaHandle = (data: any, opereState: any) => {
   if (opereState) {
     row['status'] = 'occupy'
     row['user'] = data
-
     Boards.occBoard(row).then((res: any) => {
       console.log(res, 'res')
       if (res.code == 200) {
         reloadBoardsList()
       }
     })
-    // ElMessageBox.confirm(
-    //   `Hi ${data},  是否要occupyIP为【 ${row['ip']} 】的 ${row['type']}?`,
-    //   'Tip',
-    //   {
-    //     confirmButtonText: 'OK',
-    //     cancelButtonText: 'Cancel',
-    //     type: 'info'
-    //   }
-    // ).then(() => {
-    //   Boards.occBoard(row).then((res: any) => {
-    //     console.log(res, 'res')
-    //     if (res.code == 200) {
-    //       reloadBoardsList()
-    //     }
-    //   })
-    // })
   } else {
     const { type, ip, remark, id, number } = data
     row['id'] = id
