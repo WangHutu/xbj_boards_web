@@ -1,5 +1,5 @@
 <template>
-  <div v-ir="state">
+  <div>
     <span class="nav_text">Welcome </span>
 
     <el-link :underline="false" v-if="!adminUser" class="rightText userName" @click="loginUser()"
@@ -11,30 +11,24 @@
       |
       <el-link class="userName" :underline="false" @click="exitUser()">Exit</el-link>
     </div>
-    <userDialog @reloadVue="reloadVue" ref="userDialogRef"></userDialog>
+    <userDialog ref="userDialogRef"></userDialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { LocalVue } from '@/common/utils'
 import userDialog from '@/components/userDialog.vue'
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 const adminUser = ref<string | undefined>(LocalVue.getLocal('adminUser')?.split('"').join(''))
-const state = ref(true)
 const userDialogRef = ref<InstanceType<typeof userDialog>>()
-
+const reload: any = inject('reload')
 const loginUser = () => {
   userDialogRef.value?.userInit()
 }
 
 const exitUser = () => {
   LocalVue.removeLocal('adminUser')
-}
-
-const reloadVue = () => {
-  console.log('87468764')
-  state.value = false
-  state.value = true
+  reload()
 }
 </script>
 

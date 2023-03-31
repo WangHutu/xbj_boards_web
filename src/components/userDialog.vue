@@ -1,6 +1,12 @@
 <template>
-  <el-dialog :model-value="userDialogState" title="请输入管理员账号密码">
-    <el-form :model="loginForm" ref="ruleFormRef" :rules="rules" label-width="60px">
+  <el-dialog
+    :close-on-click-modal="false"
+    :show-close="false"
+    :model-value="userDialogState"
+    title="请输入管理员账号密码"
+    width="600px"
+  >
+    <el-form :model="loginForm" ref="ruleFormRef" :rules="rules" label-width="60px" @submit.prevent>
       <el-form-item label="admin" prop="admin">
         <el-input v-model="loginForm.admin" autocomplete="off" />
       </el-form-item>
@@ -15,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, inject } from 'vue'
 import { LocalVue } from '@/common/utils'
 import type { FormInstance, FormRules } from 'element-plus'
 interface Dialogform {
@@ -24,7 +30,7 @@ interface Dialogform {
 const loginForm = reactive<Dialogform>({
   admin: ''
 })
-const emit = defineEmits(['reloadVue'])
+const reload:any = inject('reload')
 const ruleFormRef = ref<FormInstance>()
 const userDialogState = ref(false)
 const rules = reactive<FormRules>({
@@ -36,7 +42,7 @@ const accHandle = async (formEl: FormInstance | undefined) => {
     if (valid) {
       console.log('输入的用户：', loginForm.admin)
       LocalVue.setLocal('adminUser', loginForm.admin)
-      emit('reloadVue', '')
+      reload()
       userDialogState.value = false
     } else {
       console.log('error submit!', fields)

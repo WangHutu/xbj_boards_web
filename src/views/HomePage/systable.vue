@@ -114,22 +114,29 @@ const operaHandle = (data: any, opereState: any) => {
   if (opereState) {
     row['status'] = 'occupy'
     row['user'] = data
-    ElMessageBox.confirm(
-      `Hi ${data},  是否要占用IP为【 ${data.ip} 】的 ${data.type}?`,
-      'Tip',
-      {
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel',
-        type: 'info'
+
+    Boards.occBoard(row).then((res: any) => {
+      console.log(res, 'res')
+      if (res.code == 200) {
+        reloadBoardsList()
       }
-    ).then(() => {
-      Boards.occBoard(row).then((res: any) => {
-        console.log(res, 'res')
-        if (res.code == 200) {
-          reloadBoardsList()
-        }
-      })
     })
+    // ElMessageBox.confirm(
+    //   `Hi ${data},  是否要占用IP为【 ${row['ip']} 】的 ${row['type']}?`,
+    //   'Tip',
+    //   {
+    //     confirmButtonText: 'OK',
+    //     cancelButtonText: 'Cancel',
+    //     type: 'info'
+    //   }
+    // ).then(() => {
+    //   Boards.occBoard(row).then((res: any) => {
+    //     console.log(res, 'res')
+    //     if (res.code == 200) {
+    //       reloadBoardsList()
+    //     }
+    //   })
+    // })
   } else {
     const { type, ip, remark, id } = data
     row['id'] = id
@@ -138,15 +145,11 @@ const operaHandle = (data: any, opereState: any) => {
     row['status'] = 'vacant'
     row['remark'] = remark
     row['user'] = ''
-    ElMessageBox.confirm(
-      `是否要释放IP为【 ${data.ip} 】的 ${data.type}?`,
-      'Tip',
-      {
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel',
-        type: 'info'
-      }
-    ).then(() => {
+    ElMessageBox.confirm(`是否要释放IP为【 ${data.ip} 】的 ${data.type}?`, 'Tip', {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'info'
+    }).then(() => {
       Boards.reBoard(row).then((res: any) => {
         console.log(res, 'res')
         if (res.code == 200) {
