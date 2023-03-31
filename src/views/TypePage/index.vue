@@ -69,7 +69,7 @@ const delRow = (data: any) => {
   row['id'] = id
   row['typeName'] = typeName
   row['remark'] = remark
-  ElMessageBox.confirm(`是否要Del【 ${data.typeName} 】?`, 'Warning', {
+  ElMessageBox.confirm(`Are you sure you want to remove the 【 ${data.typeName} 】?`, 'Delete', {
     confirmButtonText: 'OK',
     cancelButtonText: 'Cancel',
     type: 'warning'

@@ -113,8 +113,8 @@ const occhandle = (data: any) => {
   row['user'] = adminUser
   if (adminUser) {
     ElMessageBox.confirm(
-      `Hi ${adminUser},  是否要占用IP为【 ${row['ip']} 】的 ${row['type']}?`,
-      'Tip',
+      `Hi ${adminUser}, Are you sure you want to occupy the ${row['type']} with IP address 【 ${row['ip']} 】?`,
+      'Occupy',
       {
         confirmButtonText: 'OK',
         cancelButtonText: 'Cancel',
@@ -154,7 +154,7 @@ const operaHandle = (data: any, opereState: any) => {
     row['status'] = 'vacant'
     row['remark'] = remark
     row['user'] = ''
-    ElMessageBox.confirm(`是否要释放IP为【 ${data.ip} 】的 ${data.type}?`, 'Tip', {
+    ElMessageBox.confirm(`Are you sure you want to release the ${data.type} with IP address 【 ${data.ip} 】?`, 'Release', {
       confirmButtonText: 'OK',
       cancelButtonText: 'Cancel',
       type: 'info'
@@ -176,7 +176,7 @@ const delRow = (data: any) => {
   row['number'] = number
   row['status'] = status
   row['remark'] = remark
-  ElMessageBox.confirm(`是否要DelIP为【 ${data.ip} 】的 ${data.type}?`, 'Tip', {
+  ElMessageBox.confirm(`Are you sure you want to remove the ${data.type} with IP address【 ${data.ip} 】`, 'Delete', {
     confirmButtonText: 'OK',
     cancelButtonText: 'Cancel',
     type: 'warning'
