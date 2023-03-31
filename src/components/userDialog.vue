@@ -3,9 +3,12 @@
     :close-on-click-modal="false"
     :show-close="false"
     :model-value="userDialogState"
-    title="请输入管理员账号密码"
+    title="Please enter an administrator account to maintain system information."
     width="600px"
   >
+    <template #title >
+      <span >Please enter an administrator account to maintain system information.</span>
+    </template>
     <el-form :model="loginForm" ref="ruleFormRef" :rules="rules" label-width="60px" @submit.prevent>
       <el-form-item label="admin" prop="admin">
         <el-input v-model="loginForm.admin" autocomplete="off" />
@@ -24,23 +27,34 @@
 import { ref, reactive, inject } from 'vue'
 import { LocalVue } from '@/common/utils'
 import type { FormInstance, FormRules } from 'element-plus'
+import { useCounterStore } from '@/stores/counter'
 interface Dialogform {
   admin: string
 }
 const loginForm = reactive<Dialogform>({
   admin: ''
 })
-const reload:any = inject('reload')
+const userList = useCounterStore()
+const reload: any = inject('reload')
 const ruleFormRef = ref<FormInstance>()
 const userDialogState = ref(false)
+const validatePass = (rule: any, value: any, callback: any) => {
+  console.log(loginForm.admin, 'loginForm.admin')
+  if (loginForm.admin === '') {
+    callback(new Error('Please input admin'))
+  } else if (!userList.count.includes(loginForm.admin)) {
+    callback(new Error('The administrator does not exist.'))
+  } else {
+    callback()
+  }
+}
 const rules = reactive<FormRules>({
-  admin: [{ required: true, message: 'Please input admin', trigger: 'blur' }]
+  admin: [{ required: true, validator: validatePass, trigger: 'blur' }]
 })
 const accHandle = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      console.log('输入的用户：', loginForm.admin)
       LocalVue.setLocal('adminUser', loginForm.admin)
       reload()
       userDialogState.value = false

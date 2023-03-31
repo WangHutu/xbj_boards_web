@@ -20,13 +20,16 @@
       <el-form-item label="Ip: " prop="ip">
         <el-input v-model="formData.ip" autocomplete="off" placeholder="Please input" />
       </el-form-item>
+      <el-form-item label="Number: " prop="number">
+        <el-input v-model="formData.number" autocomplete="off" placeholder="Please input" />
+      </el-form-item>
       <el-form-item label="">
         <el-switch
           v-model="state"
           class="mb-2"
           style="--el-switch-on-color: #13ce66"
-          active-text="占用"
-          inactive-text="空闲"
+          active-text="occupy"
+          inactive-text="vacant"
         />
       </el-form-item>
       <el-form-item label="Remark: ">
@@ -53,6 +56,7 @@ interface Dialogform {
   id: string
   type: string
   ip: string
+  number: string
   oldIp: string
   status: string
   remark: string
@@ -61,8 +65,9 @@ const formData = reactive<Dialogform>({
   id: '',
   type: '',
   ip: '',
+  number: '',
   oldIp: '',
-  status: '空闲',
+  status: 'vacant',
   remark: ''
 })
 const state = ref(false)
@@ -131,11 +136,12 @@ const submitHandle = (formEl: FormInstance | undefined) => {
 }
 const dilogInit = (data?: any): void => {
   if (data) {
-    const { type, ip, status, remark, id } = JSON.parse(JSON.stringify(data))
+    const { type, ip, status, remark, id, number } = JSON.parse(JSON.stringify(data))
     formData['id'] = id
     formData['type'] = type
     formData['ip'] = ip
     formData['oldIp'] = ip
+    formData['number'] = number
     formData['status'] = status
     formData['remark'] = remark
     state.value = formData['status'] === 'occupy'
@@ -145,6 +151,7 @@ const dilogInit = (data?: any): void => {
     formData['type'] = ''
     formData['ip'] = ''
     formData['oldIp'] = ''
+    formData['number'] = ''
     formData['status'] = 'vacant'
     formData['remark'] = ''
     dialogTitle.value = 'New Board'

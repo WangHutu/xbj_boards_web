@@ -3,9 +3,9 @@ import { defineStore } from 'pinia'
 
 export const useCounterStore = defineStore('counter', () => {
   const count = ref<Array<string>>([
-    'ubuntu',
-    'root',
-    'rfwang',
+    // 'ubuntu',
+    // 'root',
+    // 'rfwang',
     'runfengw', 'yanjunz', 'huizhang', 'qingz'])
 
   return { count }

@@ -3,7 +3,7 @@
     :close-on-click-modal="false"
     :show-close="false"
     :model-value="loginDialogState"
-    title="请输入用户名使用"
+    title="Please enter a user name to continue the operation."
     width="600px"
   >
     <el-form :model="loginForm" ref="ruleFormRef" :rules="rules" label-width="60px" @submit.prevent>

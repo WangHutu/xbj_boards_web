@@ -2,6 +2,7 @@
   <el-table v-loading="loading" :data="tableData" stripe border style="width: 100%">
     <el-table-column prop="type" label="Type" width="120" />
     <el-table-column prop="ip" label="Ip" min-width="180" />
+    <el-table-column prop="number" label="Number" min-width="150" />
     <el-table-column prop="status" label="Status" width="100px" align="center">
       <template #default="scope">
         <el-tag
@@ -10,7 +11,7 @@
           :type="scope.row.status === 'vacant' ? 'success' : 'danger'"
           disable-transitions
         >
-          {{ scope.row.status === 'vacant' ? '空闲' : '占用' }}
+          {{ scope.row.status === 'vacant' ? 'vacant' : 'occupy' }}
         </el-tag>
       </template>
     </el-table-column>
@@ -20,14 +21,14 @@
       </template>
     </el-table-column>
     <el-table-column prop="remark" label="Remark" min-width="180" />
-    <el-table-column label="operate " width="150px" align="center">
+    <el-table-column label="operate " width="180px" align="center">
       <template #default="scope">
         <el-link
           v-if="scope.row.status !== 'vacant'"
           type="primary"
           :underline="false"
           @click="operaHandle(scope.row, 0)"
-          >释放</el-link
+          >Release</el-link
         >
         <el-tooltip
           v-else
@@ -42,12 +43,12 @@
             :underline="false"
             :disabled="scope.row.status !== 'vacant'"
             @click="occhandle(scope.row)"
-            >占用</el-link
+            >Occupy</el-link
           >
         </el-tooltip>
 
         <el-link v-if="stateBtn" type="primary" :underline="false" @click="editHandle(scope.row)"
-          >编辑</el-link
+          >Edit</el-link
         >
         <el-link
           v-if="stateBtn"
@@ -55,7 +56,7 @@
           :underline="false"
           :disabled="scope.row.status !== 'vacant'"
           @click="delRow(scope.row)"
-          >删除</el-link
+          >Del</el-link
         >
       </template>
     </el-table-column>
@@ -86,7 +87,6 @@ defineProps<{
   stateBtn: Boolean
 }>()
 const emit = defineEmits(['showDialog', 'getBoardsList'])
-const userName = ref<string | undefined>(LocalVue.getLocal('user')?.split('"').join(''))
 const editHandle = (row: any) => {
   emit('showDialog', row)
 }
@@ -94,16 +94,18 @@ const row = reactive({
   id: '',
   type: '',
   ip: '',
+  number: '',
   status: '',
   remark: '',
   user: ''
 })
 const loginDialogRef = ref<InstanceType<typeof loginDialog>>()
 const occhandle = (data: any) => {
-  const { type, ip, remark, id } = data
+  const { type, ip, remark, id, number } = data
   row['id'] = id
   row['type'] = type
   row['ip'] = ip
+  row['number'] = number
   row['remark'] = remark
   loginDialogRef.value?.loginInit()
 }
@@ -122,7 +124,7 @@ const operaHandle = (data: any, opereState: any) => {
       }
     })
     // ElMessageBox.confirm(
-    //   `Hi ${data},  是否要占用IP为【 ${row['ip']} 】的 ${row['type']}?`,
+    //   `Hi ${data},  是否要occupyIP为【 ${row['ip']} 】的 ${row['type']}?`,
     //   'Tip',
     //   {
     //     confirmButtonText: 'OK',
@@ -138,10 +140,11 @@ const operaHandle = (data: any, opereState: any) => {
     //   })
     // })
   } else {
-    const { type, ip, remark, id } = data
+    const { type, ip, remark, id, number } = data
     row['id'] = id
     row['type'] = type
     row['ip'] = ip
+    row['number'] = number
     row['status'] = 'vacant'
     row['remark'] = remark
     row['user'] = ''
@@ -160,13 +163,14 @@ const operaHandle = (data: any, opereState: any) => {
   }
 }
 const delRow = (data: any) => {
-  const { type, ip, status, remark, id } = data
+  const { type, ip, status, remark, id, number } = data
   row['id'] = id
   row['type'] = type
   row['ip'] = ip
+  row['number'] = number
   row['status'] = status
   row['remark'] = remark
-  ElMessageBox.confirm(`是否要删除IP为【 ${data.ip} 】的 ${data.type}?`, 'Tip', {
+  ElMessageBox.confirm(`是否要DelIP为【 ${data.ip} 】的 ${data.type}?`, 'Tip', {
     confirmButtonText: 'OK',
     cancelButtonText: 'Cancel',
     type: 'warning'

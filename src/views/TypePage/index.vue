@@ -14,7 +14,7 @@
             />
           </el-col>
           <el-col :span="2" style="text-align: right">
-            <el-button v-if="stateBtn" type="primary" @click="showDialog()">添加</el-button>
+            <el-button v-if="stateBtn" type="primary" @click="showDialog()">ADD</el-button>
           </el-col>
         </el-row>
       </div>
@@ -23,8 +23,8 @@
         <el-table-column prop="remark" label="Remark" min-width="180" />
         <el-table-column v-if="stateBtn" label="operate " width="150px" align="center">
           <template #default="scope">
-            <el-link type="primary" :underline="false" @click="showDialog(scope.row)">编辑</el-link>
-            <el-link type="primary" :underline="false" @click="delRow(scope.row)">删除</el-link>
+            <el-link type="primary" :underline="false" @click="showDialog(scope.row)">Edit</el-link>
+            <el-link type="primary" :underline="false" @click="delRow(scope.row)">Del</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -69,7 +69,7 @@ const delRow = (data: any) => {
   row['id'] = id
   row['typeName'] = typeName
   row['remark'] = remark
-  ElMessageBox.confirm(`是否要删除【 ${data.typeName} 】?`, 'Warning', {
+  ElMessageBox.confirm(`是否要Del【 ${data.typeName} 】?`, 'Warning', {
     confirmButtonText: 'OK',
     cancelButtonText: 'Cancel',
     type: 'warning'

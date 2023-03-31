@@ -10,19 +10,19 @@
     <!-- <div class="logo">LOGO</div> -->
     <el-menu-item index="/">
       <el-icon><House /></el-icon>
-      <template #title>首页</template>
+      <template #title>Home</template>
     </el-menu-item>
     <el-menu-item index="/type">
       <el-icon>
         <Document />
       </el-icon>
-      <template #title>类型</template>
+      <template #title>Type</template>
     </el-menu-item>
     <el-menu-item index="/logs">
             <el-icon>
                 <User />
             </el-icon>
-            <template #title>日志</template>
+            <template #title>Log</template>
         </el-menu-item>
   </el-menu>
 </template>

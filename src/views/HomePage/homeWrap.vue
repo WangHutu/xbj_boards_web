@@ -45,7 +45,7 @@
               @keyup.enter="searchhandle"
           /></el-col>
           <el-col :span="2" style="text-align: right">
-            <el-button v-if="stateBtn" type="primary" @click="showDialog()">添加</el-button>
+            <el-button v-if="stateBtn" type="primary" @click="showDialog()">ADD</el-button>
           </el-col>
         </el-row>
       </div>
@@ -97,8 +97,8 @@ const dialogFormVisible = ref(false)
 const tableData = ref([])
 const types = ref<Array<TypeObject>>([])
 const status = [
-  { value: 'vacant', label: '空闲' },
-  { value: 'occupy', label: '占用' }
+  { value: 'vacant', label: 'vacant' },
+  { value: 'occupy', label: 'occupy' }
 ]
 const searchForm = ref<Homeform>({
   type: [],
@@ -108,7 +108,6 @@ const searchForm = ref<Homeform>({
 const searchhandle = () => {
   getBoardsList(searchForm.value)
 }
-const userName = ref<string | undefined>(LocalVue.getLocal('user')?.split('"').join(''))
 const sysdialogRef = ref<InstanceType<typeof sysdialog>>()
 const loginDialogRef = ref<InstanceType<typeof loginDialog>>()
 const showDialog = (data?: object) => {
