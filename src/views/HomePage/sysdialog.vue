@@ -160,6 +160,7 @@ const dilogInit = (data?: any): void => {
     formData['remark'] = ''
     formData['user'] = ''
     dialogTitle.value = 'New Board'
+    state.value = false
   }
   dialogFormVisible.value = true
 }

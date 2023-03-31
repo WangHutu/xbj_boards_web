@@ -49,10 +49,20 @@
           </el-col>
         </el-row>
       </div>
+      <div class="tip_state">
+        <div class="state_item">
+          <span class="state_pub idle"></span>
+          <span>Idle</span>
+        </div>
+        <div class="state_item">
+          <span class="state_pub inuse"></span>
+          <span>In use</span>
+        </div>
+      </div>
       <systable
         v-model:tableData="tableData"
         v-model:loading="loading"
-        v-model:stateBtn='stateBtn'
+        v-model:stateBtn="stateBtn"
         @showDialog="showDialog"
         @getBoardsList="getBoardsList"
       ></systable>
@@ -97,8 +107,8 @@ const dialogFormVisible = ref(false)
 const tableData = ref([])
 const types = ref<Array<TypeObject>>([])
 const status = [
-  { value: 'vacant', label: 'vacant' },
-  { value: 'occupy', label: 'occupy' }
+  { value: 'vacant', label: 'Idle' },
+  { value: 'occupy', label: 'Inuse' }
 ]
 const searchForm = ref<Homeform>({
   type: [],
@@ -184,5 +194,30 @@ onMounted(() => {
   height: 50px;
   line-height: 50px;
   margin-bottom: 10px;
+}
+.tip_state {
+  display: flex;
+  margin: 10px 0;
+  height: 20px;
+}
+.state_item {
+  margin-right: 50px;
+  color: #909399;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 20px;
+}
+.state_pub {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin: auto 10px 2px auto;
+}
+.inuse {
+  background: #f56c6c;
+}
+.idle {
+  background: #67c23a;
 }
 </style>

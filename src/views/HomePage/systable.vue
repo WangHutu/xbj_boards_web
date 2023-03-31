@@ -3,16 +3,19 @@
     <el-table-column prop="type" label="Type" width="120" />
     <el-table-column prop="ip" label="Ip" min-width="180" />
     <el-table-column prop="number" label="Number" min-width="150" />
-    <el-table-column prop="status" label="Status" width="100px" align="center">
+    <el-table-column prop="status" label="State" width="100px" align="center">
       <template #default="scope">
-        <el-tag
-          round
+        <el-tooltip
+          class="box-item"
           effect="dark"
-          :type="scope.row.status === 'vacant' ? 'success' : 'danger'"
-          disable-transitions
+          :content="scope.row.status === 'vacant' ? 'idle' : 'inuse'"
+          placement="top"
         >
-          {{ scope.row.status === 'vacant' ? 'vacant' : 'occupy' }}
-        </el-tag>
+          <span
+            class="state_color"
+            :class="scope.row.status === 'vacant' ? 'idle' : 'inuse'"
+          ></span>
+        </el-tooltip>
       </template>
     </el-table-column>
     <el-table-column prop="user" label="User" width="160px">
@@ -193,5 +196,17 @@ const delRow = (data: any) => {
 <style scoped>
 a {
   margin-right: 10px;
+}
+.state_color {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.inuse {
+  background: #f56c6c;
+}
+.idle {
+  background: #67c23a;
 }
 </style>
