@@ -48,6 +48,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { Boards } from '@/api/api'
+import { LocalVue } from '@/common/utils'
 import type { FormInstance, FormRules } from 'element-plus'
 defineProps<{
   types: Array<any>
@@ -60,6 +61,7 @@ interface Dialogform {
   oldIp: string
   status: string
   remark: string
+  user: string
 }
 const formData = reactive<Dialogform>({
   id: '',
@@ -68,7 +70,8 @@ const formData = reactive<Dialogform>({
   number: '',
   oldIp: '',
   status: 'vacant',
-  remark: ''
+  remark: '',
+  user:''
 })
 const state = ref(false)
 const ruleFormRef = ref<FormInstance>()
@@ -110,8 +113,9 @@ const submitDialog = async (formEl: FormInstance | undefined) => {
 }
 const submitHandle = (formEl: FormInstance | undefined) => {
   console.log(dialogTitle.value, 'dialogTitle.value')
-
+  const adminUser = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
   formData['status'] = state.value ? 'occupy' : 'vacant'
+  formData['user'] = state.value ? adminUser : ''
   if (dialogTitle.value == 'Edit Board') {
     Boards.updateBoardList(formData).then((res: any) => {
       console.log(res, 'res')
@@ -154,6 +158,7 @@ const dilogInit = (data?: any): void => {
     formData['number'] = ''
     formData['status'] = 'vacant'
     formData['remark'] = ''
+    formData['user'] = ''
     dialogTitle.value = 'New Board'
   }
   dialogFormVisible.value = true
