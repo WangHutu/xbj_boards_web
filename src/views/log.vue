@@ -72,7 +72,13 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="Type" width="120" />
+        <el-table-column prop="type" label="Type" width="120" >
+        <template #default="scope">
+            <span v-if="scope.row.newType !== scope.row.type">
+              {{ scope.row.type }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="newType" label="newType" width="120">
           <template #default="scope">
             <span
@@ -86,7 +92,13 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="ip" label="Ip" min-width="150" />
+        <el-table-column prop="ip" label="Ip" min-width="150" >
+          <template #default="scope">
+            <span v-if="scope.row.newIp !== scope.row.ip">
+              {{ scope.row.ip }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="newIp" label="newIp" min-width="150">
           <template #default="scope">
             <span
@@ -100,7 +112,13 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="image" label="Image" min-width="150" />
+        <el-table-column prop="image" label="Image" min-width="150" >
+          <template #default="scope">
+            <span v-if="scope.row.newImage !== scope.row.image">
+              {{ scope.row.image }}
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="newImage" label="new Image" min-width="150">
           <template #default="scope">
             <span
