@@ -1,36 +1,24 @@
 <template>
-  <el-dialog
-    :model-value="dialogFormVisible"
-    :title="dialogTitle"
-    :close-on-click-modal="false"
-    :show-close="false"
-    width="600px"
-  >
-    <el-form :model="formData" ref="ruleFormRef" :rules="rules" label-width="60px">
+  <el-dialog :model-value="dialogFormVisible" :title="dialogTitle" :close-on-click-modal="false" :show-close="false"
+    width="600px">
+    <el-form :model="formData" ref="ruleFormRef" :rules="rules" label-width="115px">
       <el-form-item label="Type: " prop="type">
         <el-select v-model="formData.type" placeholder="Please select a type">
-          <el-option
-            :key="index"
-            v-for="(item, index) in types"
-            :label="item.typeName"
-            :value="item.typeName"
-          />
+          <el-option :key="index" v-for="(item, index) in types" :label="item.typeName" :value="item.typeName" />
         </el-select>
       </el-form-item>
       <el-form-item label="Ip: " prop="ip">
         <el-input v-model="formData.ip" autocomplete="off" placeholder="Please input" />
       </el-form-item>
-      <el-form-item label="Number: " prop="number">
+      <el-form-item label="Hardware Rev: " prop="number">
         <el-input v-model="formData.number" autocomplete="off" placeholder="Please input" />
       </el-form-item>
+      <el-form-item label="Image: " prop="image">
+        <el-input v-model="formData.image" autocomplete="off" placeholder="Please input" />
+      </el-form-item>
       <el-form-item label="">
-        <el-switch
-          v-model="state"
-          class="mb-2"
-          style="--el-switch-on-color: #13ce66"
-          active-text="occupy"
-          inactive-text="vacant"
-        />
+        <el-switch v-model="state" class="mb-2" style="--el-switch-on-color: #13ce66" active-text="occupy"
+          inactive-text="vacant" />
       </el-form-item>
       <el-form-item label="Remark: ">
         <el-input v-model="formData.remark" type="textarea" placeholder="Please input" />
@@ -58,6 +46,7 @@ interface Dialogform {
   type: string
   ip: string
   number: string
+  image: string
   oldIp: string
   status: string
   remark: string
@@ -68,10 +57,11 @@ const formData = reactive<Dialogform>({
   type: '',
   ip: '',
   number: '',
+  image: '',
   oldIp: '',
   status: 'vacant',
   remark: '',
-  user:''
+  user: ''
 })
 const state = ref(false)
 const ruleFormRef = ref<FormInstance>()
@@ -140,12 +130,13 @@ const submitHandle = (formEl: FormInstance | undefined) => {
 }
 const dilogInit = (data?: any): void => {
   if (data) {
-    const { type, ip, status, remark, id, number } = JSON.parse(JSON.stringify(data))
+    const { type, ip, status, remark, id, number, image } = JSON.parse(JSON.stringify(data))
     formData['id'] = id
     formData['type'] = type
     formData['ip'] = ip
     formData['oldIp'] = ip
     formData['number'] = number
+    formData['image'] = image
     formData['status'] = status
     formData['remark'] = remark
     state.value = formData['status'] === 'occupy'
@@ -156,6 +147,7 @@ const dilogInit = (data?: any): void => {
     formData['ip'] = ''
     formData['oldIp'] = ''
     formData['number'] = ''
+    formData['image'] = ''
     formData['status'] = 'vacant'
     formData['remark'] = ''
     formData['user'] = ''

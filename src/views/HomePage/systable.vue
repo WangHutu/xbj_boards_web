@@ -1,9 +1,10 @@
 <template>
   <el-table v-loading="loading" :data="tableData" stripe border style="width: 100%">
-    <el-table-column prop="type" label="Type" width="120" />
-    <el-table-column prop="ip" label="Ip" min-width="180" />
-    <el-table-column prop="number" label="Number" min-width="150" />
-    <el-table-column prop="status" label="State" width="100px" align="center">
+    <el-table-column fixed prop="type" label="Type" width="90" />
+    <el-table-column fixed prop="ip" label="Ip" min-width="150" />
+    <el-table-column prop="number" label="Hardware Rev" min-width="150" />
+    <el-table-column prop="image" label="Image" min-width="120" />
+    <el-table-column prop="status" label="State" width="80px" align="center">
       <template #default="scope">
         <el-tooltip
           class="box-item"
@@ -18,13 +19,13 @@
         </el-tooltip>
       </template>
     </el-table-column>
-    <el-table-column prop="user" label="User" width="160px">
+    <el-table-column prop="user" label="User" width="130px">
       <template #default="scope">
         {{ scope.row.user ? scope.row.user : '-' }}
       </template>
     </el-table-column>
     <el-table-column prop="remark" label="Remark" min-width="180" />
-    <el-table-column label="operate " width="180px" align="center">
+    <el-table-column label="operate" fixed="right" width="180px" align="center">
       <template #default="scope">
         <el-link
           v-if="scope.row.status !== 'vacant'"
@@ -89,6 +90,7 @@ const row = reactive({
   type: '',
   ip: '',
   number: '',
+  image: '',
   status: '',
   remark: '',
   user: ''
@@ -97,11 +99,12 @@ const loginDialogRef = ref<InstanceType<typeof loginDialog>>()
 const occhandle = (data: any) => {
   const adminUser = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
   console.log('adminUser', adminUser)
-  const { type, ip, remark, id, number } = data
+  const { type, ip, remark, id, number, image } = data
   row['id'] = id
   row['type'] = type
   row['ip'] = ip
   row['number'] = number
+  row['image'] = image
   row['remark'] = remark
   row['status'] = 'occupy'
   row['user'] = adminUser
@@ -140,11 +143,12 @@ const operaHandle = (data: any, opereState: any) => {
       }
     })
   } else {
-    const { type, ip, remark, id, number } = data
+    const { type, ip, remark, id, number, image } = data
     row['id'] = id
     row['type'] = type
     row['ip'] = ip
     row['number'] = number
+    row['image'] = image
     row['status'] = 'vacant'
     row['remark'] = remark
     row['user'] = ''
@@ -167,11 +171,12 @@ const operaHandle = (data: any, opereState: any) => {
   }
 }
 const delRow = (data: any) => {
-  const { type, ip, status, remark, id, number } = data
+  const { type, ip, status, remark, id, number, image } = data
   row['id'] = id
   row['type'] = type
   row['ip'] = ip
   row['number'] = number
+  row['image'] = image
   row['status'] = status
   row['remark'] = remark
   ElMessageBox.confirm(

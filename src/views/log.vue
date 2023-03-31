@@ -63,7 +63,7 @@
         style="width: 100%"
         :default-sort="{ prop: 'time', order: 'ascending' }"
       >
-        <el-table-column prop="time" sortable label="Time" width="180" />
+        <el-table-column fixed prop="time" sortable label="Time" width="180" />
         <el-table-column prop="user" label="User" width="90" />
         <el-table-column prop="operate" label="Operate" min-width="120">
           <template #default="scope">
@@ -100,17 +100,17 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="number" label="number" min-width="150" />
-        <el-table-column prop="newNumber" label="newNumber" min-width="150">
+        <el-table-column prop="image" label="Image" min-width="150" />
+        <el-table-column prop="newImage" label="new Image" min-width="150">
           <template #default="scope">
             <span
               :class="
-                scope.row.operate === 'update' && scope.row.newNumber !== scope.row.number
+                scope.row.operate === 'update' && scope.row.newImage !== scope.row.image
                   ? 'importClass'
                   : ''
               "
             >
-              {{ scope.row.newNumber }}
+              {{ scope.row.newImage }}
             </span>
           </template>
         </el-table-column>
