@@ -30,23 +30,14 @@
           @click="operaHandle(scope.row, 0)"
           >Release</el-link
         >
-        <el-tooltip
+        <el-link
           v-else
-          class="box-item"
-          :disabled="scope.row.status === 'True'"
-          effect="dark"
-          content="Occupancy status unavailable"
-          placement="top-start"
+          type="primary"
+          :underline="false"
+          :disabled="scope.row.status !== 'vacant'"
+          @click="occhandle(scope.row)"
+          >Occupy</el-link
         >
-          <el-link
-            type="primary"
-            :underline="false"
-            :disabled="scope.row.status !== 'vacant'"
-            @click="occhandle(scope.row)"
-            >Occupy</el-link
-          >
-        </el-tooltip>
-
         <el-link v-if="stateBtn" type="primary" :underline="false" @click="editHandle(scope.row)"
           >Edit</el-link
         >
@@ -154,11 +145,15 @@ const operaHandle = (data: any, opereState: any) => {
     row['status'] = 'vacant'
     row['remark'] = remark
     row['user'] = ''
-    ElMessageBox.confirm(`Are you sure you want to release the ${data.type} with IP address 【 ${data.ip} 】?`, 'Release', {
-      confirmButtonText: 'OK',
-      cancelButtonText: 'Cancel',
-      type: 'info'
-    }).then(() => {
+    ElMessageBox.confirm(
+      `Are you sure you want to release the ${data.type} with IP address 【 ${data.ip} 】?`,
+      'Release',
+      {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'info'
+      }
+    ).then(() => {
       Boards.reBoard(row).then((res: any) => {
         console.log(res, 'res')
         if (res.code == 200) {
@@ -176,11 +171,15 @@ const delRow = (data: any) => {
   row['number'] = number
   row['status'] = status
   row['remark'] = remark
-  ElMessageBox.confirm(`Are you sure you want to remove the ${data.type} with IP address【 ${data.ip} 】`, 'Delete', {
-    confirmButtonText: 'OK',
-    cancelButtonText: 'Cancel',
-    type: 'warning'
-  }).then(() => {
+  ElMessageBox.confirm(
+    `Are you sure you want to remove the ${data.type} with IP address【 ${data.ip} 】`,
+    'Delete',
+    {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'warning'
+    }
+  ).then(() => {
     Boards.delBoardList(row).then((res: any) => {
       console.log(res, 'res')
       if (res.code == 200) {
