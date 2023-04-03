@@ -58,6 +58,7 @@ const accHandle = async (formEl: FormInstance | undefined) => {
       LocalVue.setLocal('adminUser', loginForm.admin)
       reload()
       userDialogState.value = false
+      onCloseHandle(formEl)
     } else {
       console.log('error submit!', fields)
     }

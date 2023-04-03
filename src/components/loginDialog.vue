@@ -45,6 +45,7 @@ const accHandle = async (formEl: FormInstance | undefined) => {
       emit('getBoardsList', '')
       emit('occhandle', loginForm.user, 1)
       loginDialogState.value = false
+      onCloseHandle(formEl)
     } else {
       console.log('error submit!', fields)
     }
