@@ -73,13 +73,16 @@
         v-model:dialog-form-visible="dialogFormVisible"
         v-model:types="types"
       ></sysdialog>
-      <loginDialog @getBoardsList="getBoardsList" ref="loginDialogRef"></loginDialog>
+      <loginDialog
+        @reloadHandle="reloadHandle"
+        ref="loginDialogRef"
+      ></loginDialog>
     </div>
   </el-scrollbar>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { Boards } from '@/api/api'
 import systable from './systable.vue'
@@ -98,6 +101,8 @@ interface TypeObject {
   remark: string
   typeName: string
 }
+const reload: any = inject('reload')
+const loginUser = ref<string | undefined>(LocalVue.getLocal('user')?.split('"').join(''))
 const store = useCounterStore()
 const loading = ref(true)
 const stateBtn = ref(false)
@@ -119,6 +124,9 @@ const searchForm = ref<Homeform>({
 })
 const searchhandle = () => {
   getBoardsList(searchForm.value)
+}
+const reloadHandle = ()=> {
+  reload()
 }
 const sysdialogRef = ref<InstanceType<typeof sysdialog>>()
 const loginDialogRef = ref<InstanceType<typeof loginDialog>>()
@@ -167,6 +175,7 @@ const getBoardsList = (data: any) => {
             ElMessage.error('没有获取到终端用户！')
           }
           console.log('终端用户：', LocalVue.getLocal('terminal_user'))
+          console.log('用户：', LocalVue.getLocal('user'))
           const name = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
           stateBtn.value = store.count.includes(name)
         }
@@ -185,9 +194,9 @@ const getBoardsList = (data: any) => {
 onMounted(() => {
   getTypeList('')
   getBoardsList('')
-  // if (!userName.value) {
-  //   loginDialogRef.value?.loginInit()
-  // }
+  if (!loginUser.value) {
+    loginDialogRef.value?.loginInit()
+  }
 })
 </script>
 

@@ -45,7 +45,7 @@
           type="primary"
           :underline="false"
           :disabled="scope.row.status !== 'vacant'"
-          @click="occhandle(scope.row)"
+          @click="operaHandle(scope.row, 1)"
           >Occupy</el-link
         >
         <el-link v-if="stateBtn" type="primary" :underline="false" @click="editHandle(scope.row)"
@@ -62,11 +62,11 @@
       </template>
     </el-table-column>
   </el-table>
-  <loginDialog
+  <!-- <loginDialog
     @getBoardsList="reloadBoardsList"
     @occhandle="operaHandle"
     ref="loginDialogRef"
-  ></loginDialog>
+  ></loginDialog> -->
 </template>
 
 <script setup lang="ts">
@@ -95,10 +95,46 @@ const row = reactive({
   remark: '',
   user: ''
 })
-const loginDialogRef = ref<InstanceType<typeof loginDialog>>()
-const occhandle = (data: any) => {
+// const loginDialogRef = ref<InstanceType<typeof loginDialog>>()
+// const occhandle = (data: any) => {
+//   const adminUser = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
+//   const loginUser = LocalVue.getLocal('user')?.split('"').join('') || ''
+//   const { type, ip, remark, id, number, image } = data
+//   row['id'] = id
+//   row['type'] = type
+//   row['ip'] = ip
+//   row['number'] = number
+//   row['image'] = image
+//   row['remark'] = remark
+//   row['status'] = 'occupy'
+//   row['user'] = adminUser
+//   if (adminUser) {
+//     ElMessageBox.confirm(
+//       `Hi ${adminUser}, Are you sure you want to occupy the ${row['type']} with IP address 【 ${row['ip']} 】?`,
+//       'Occupy',
+//       {
+//         confirmButtonText: 'OK',
+//         cancelButtonText: 'Cancel',
+//         type: 'info'
+//       }
+//     ).then(() => {
+//       Boards.occBoard(row).then((res: any) => {
+//         console.log(res, 'res')
+//         if (res.code == 200) {
+//           reloadBoardsList()
+//         }
+//       })
+//     })
+//   } else {
+//     loginDialogRef.value?.loginInit()
+//   }
+// }
+const reloadBoardsList = () => {
+  emit('getBoardsList', '')
+}
+const operaHandle = (data: any, opereState: any) => {
   const adminUser = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
-  console.log('adminUser', adminUser)
+  const loginUser = LocalVue.getLocal('user')?.split('"').join('') || ''
   const { type, ip, remark, id, number, image } = data
   row['id'] = id
   row['type'] = type
@@ -106,12 +142,12 @@ const occhandle = (data: any) => {
   row['number'] = number
   row['image'] = image
   row['remark'] = remark
-  row['status'] = 'occupy'
-  row['user'] = adminUser
-  if (adminUser) {
+  if (opereState) {
+    row['user'] = adminUser ? adminUser : loginUser
+    row['status'] = 'occupy'
     ElMessageBox.confirm(
-      `Hi ${adminUser}, Are you sure you want to occupy the ${row['type']} with IP address 【 ${row['ip']} 】?`,
-      'Occupy',
+      `Hi ${row['user']}, Are you sure you want to occupy the ${data.type} with IP address 【 ${data.ip} 】?`,
+      'Release',
       {
         confirmButtonText: 'OK',
         cancelButtonText: 'Cancel',
@@ -126,31 +162,7 @@ const occhandle = (data: any) => {
       })
     })
   } else {
-    loginDialogRef.value?.loginInit()
-  }
-}
-const reloadBoardsList = () => {
-  emit('getBoardsList', '')
-}
-const operaHandle = (data: any, opereState: any) => {
-  if (opereState) {
-    row['status'] = 'occupy'
-    row['user'] = data
-    Boards.occBoard(row).then((res: any) => {
-      console.log(res, 'res')
-      if (res.code == 200) {
-        reloadBoardsList()
-      }
-    })
-  } else {
-    const { type, ip, remark, id, number, image } = data
-    row['id'] = id
-    row['type'] = type
-    row['ip'] = ip
-    row['number'] = number
-    row['image'] = image
     row['status'] = 'vacant'
-    row['remark'] = remark
     row['user'] = ''
     ElMessageBox.confirm(
       `Are you sure you want to release the ${data.type} with IP address 【 ${data.ip} 】?`,

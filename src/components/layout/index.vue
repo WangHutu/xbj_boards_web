@@ -1,17 +1,22 @@
 <template>
   <div class="app_wrap">
-    <MenuVue class="menu_container" />
-    <div class="main_container">
-      <HeaderVue class="navbar"></HeaderVue>
+    <MenuVue v-if="showState" class="menu_container" />
+    <div :class="showState ? 'main_container' : 'hide_main_container'">
+      <HeaderVue class="navbar" :class="showState ? 'show_navbar' : ''"></HeaderVue>
       <ContentVue class="main_wrap" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { LocalVue } from '@/common/utils'
+import { ref } from 'vue'
 import HeaderVue from './Header.vue'
 import MenuVue from './Menu.vue'
 import ContentVue from './Content.vue'
+
+const adminUser = ref<string | undefined>(LocalVue.getLocal('adminUser')?.split('"').join(''))
+const showState = !!adminUser.value
 </script>
 
 <style scoped>
@@ -35,18 +40,25 @@ import ContentVue from './Content.vue'
   width: calc(100vw - 210px);
   margin-left: 210px;
 }
+.hide_main_container {
+  width: 100%;
+  margin: auto;
+}
 
 .navbar {
   background-color: #fff;
   position: fixed;
   top: 0;
-  left: 210px;
-  width: calc(100vw - 250px);
+  width: calc(100vw - 50px);
   padding: 0 20px;
   height: 50px;
   line-height: 50px;
   box-shadow: 0 1px 3px hsl(0deg 0% 7% / 10%);
   z-index: 5;
+}
+.show_navbar {
+  left: 210px;
+  width: calc(100vw - 250px);
 }
 
 .main_wrap {

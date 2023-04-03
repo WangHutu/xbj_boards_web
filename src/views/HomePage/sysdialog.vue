@@ -1,10 +1,20 @@
 <template>
-  <el-dialog :model-value="dialogFormVisible" :title="dialogTitle" :close-on-click-modal="false" :show-close="false"
-    width="600px">
+  <el-dialog
+    :model-value="dialogFormVisible"
+    :title="dialogTitle"
+    :close-on-click-modal="false"
+    :show-close="false"
+    width="600px"
+  >
     <el-form :model="formData" ref="ruleFormRef" :rules="rules" label-width="115px">
       <el-form-item label="Type: " prop="type">
         <el-select v-model="formData.type" placeholder="Please select a type">
-          <el-option :key="index" v-for="(item, index) in types" :label="item.typeName" :value="item.typeName" />
+          <el-option
+            :key="index"
+            v-for="(item, index) in types"
+            :label="item.typeName"
+            :value="item.typeName"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="Ip: " prop="ip">
@@ -17,8 +27,13 @@
         <el-input v-model="formData.image" autocomplete="off" placeholder="Please input" />
       </el-form-item>
       <el-form-item label="">
-        <el-switch v-model="state" class="mb-2" style="--el-switch-on-color: #13ce66" active-text="occupy"
-          inactive-text="vacant" />
+        <el-switch
+          v-model="state"
+          class="mb-2"
+          style="--el-switch-on-color: #13ce66"
+          active-text="occupy"
+          inactive-text="vacant"
+        />
       </el-form-item>
       <el-form-item label="Remark: ">
         <el-input v-model="formData.remark" type="textarea" placeholder="Please input" />
@@ -64,6 +79,7 @@ const formData = reactive<Dialogform>({
   user: ''
 })
 const state = ref(false)
+const oldState = ref(false)
 const ruleFormRef = ref<FormInstance>()
 const emit = defineEmits(['getBoardsList'])
 const dialogTitle = ref<string>('New Board')
@@ -105,16 +121,24 @@ const submitHandle = (formEl: FormInstance | undefined) => {
   console.log(dialogTitle.value, 'dialogTitle.value')
   const adminUser = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
   formData['status'] = state.value ? 'occupy' : 'vacant'
-  formData['user'] = state.value ? adminUser : ''
   if (dialogTitle.value == 'Edit Board') {
+    if (!state.value) {
+      formData['user'] = ''
+    } else if (state.value !== oldState.value) {
+      formData['user'] = adminUser
+    }
     Boards.updateBoardList(formData).then((res: any) => {
-      console.log(res, 'res')
       if (res.code == 200) {
         emit('getBoardsList', '')
         onCloseHandle(formEl)
       }
     })
   } else {
+    if (!state.value) {
+      formData['user'] = ''
+    } else {
+      formData['user'] = adminUser
+    }
     Boards.insertBoardList(formData)
       .then((res: any) => {
         console.log(res, 'res')
@@ -130,7 +154,7 @@ const submitHandle = (formEl: FormInstance | undefined) => {
 }
 const dilogInit = (data?: any): void => {
   if (data) {
-    const { type, ip, status, remark, id, number, image } = JSON.parse(JSON.stringify(data))
+    const { type, ip, status, remark, id, number, image, user } = JSON.parse(JSON.stringify(data))
     formData['id'] = id
     formData['type'] = type
     formData['ip'] = ip
@@ -139,7 +163,9 @@ const dilogInit = (data?: any): void => {
     formData['image'] = image
     formData['status'] = status
     formData['remark'] = remark
+    formData['user'] = user
     state.value = formData['status'] === 'occupy'
+    oldState.value = formData['status'] === 'occupy'
     dialogTitle.value = 'Edit Board'
   } else {
     formData['id'] = ''

@@ -13,7 +13,7 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="onCloseHandle(ruleFormRef)">Cancel</el-button>
+        <!-- <el-button @click="onCloseHandle(ruleFormRef)">Cancel</el-button> -->
         <el-button type="primary" @click="accHandle(ruleFormRef)"> Confirm </el-button>
       </span>
     </template>
@@ -30,7 +30,7 @@ interface Dialogform {
 const loginForm = reactive<Dialogform>({
   user: ''
 })
-const emit = defineEmits(['getBoardsList', 'occhandle'])
+const emit = defineEmits(['getBoardsList', 'occhandle', 'reloadHandle'])
 const ruleFormRef = ref<FormInstance>()
 const loginDialogState = ref(false)
 const rules = reactive<FormRules>({
@@ -42,9 +42,9 @@ const accHandle = async (formEl: FormInstance | undefined) => {
     if (valid) {
       console.log('输入的用户：', loginForm.user)
       LocalVue.setLocal('user', loginForm.user)
-      emit('getBoardsList', '')
-      emit('occhandle', loginForm.user, 1)
-      loginDialogState.value = false
+      emit('reloadHandle', '')
+      // emit('getBoardsList', '')
+      // emit('occhandle', loginForm.user, 1)
       onCloseHandle(formEl)
     } else {
       console.log('error submit!', fields)
