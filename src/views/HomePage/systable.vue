@@ -209,10 +209,10 @@ const diffTime = (time: any) => {
     diffStr += `${diffInDays} day `
   }
   if (diffInHours > 0) {
-    diffStr += `${diffInHours} h`
+    diffStr += `${diffInHours} h `
   }
   if (diffInMinutes > 0) {
-    diffStr += `${diffInMinutes} min`
+    diffStr += `${diffInMinutes} min `
   }
   if (diffStr === 'Occupy ') {
     diffStr = '0 min'
