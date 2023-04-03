@@ -72,8 +72,8 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="Type" width="120" >
-        <template #default="scope">
+        <el-table-column label="Type" width="120">
+          <template #default="scope">
             <span v-if="scope.row.newType !== scope.row.type">
               {{ scope.row.type }}
             </span>
@@ -92,7 +92,7 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="ip" label="Ip" min-width="150" >
+        <el-table-column label="Ip" min-width="150">
           <template #default="scope">
             <span v-if="scope.row.newIp !== scope.row.ip">
               {{ scope.row.ip }}
@@ -112,7 +112,7 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="image" label="Image" min-width="150" >
+        <el-table-column label="Image" min-width="150">
           <template #default="scope">
             <span v-if="scope.row.newImage !== scope.row.image">
               {{ scope.row.image }}
@@ -134,6 +134,7 @@
         </el-table-column>
       </el-table>
     </div>
+    <el-backtop :right="30" :bottom="70" class="green" />
   </el-scrollbar>
 </template>
 
@@ -249,7 +250,8 @@ onMounted(() => {
   line-height: 50px;
   margin-bottom: 10px;
 }
-.importClass, .delClass {
+.importClass,
+.delClass {
   color: red;
   font-weight: bold;
 }

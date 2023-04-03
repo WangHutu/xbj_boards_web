@@ -63,6 +63,7 @@
         v-model:tableData="tableData"
         v-model:loading="loading"
         v-model:stateBtn="stateBtn"
+        v-model:dailys="dailys"
         @showDialog="showDialog"
         @getBoardsList="getBoardsList"
       ></systable>
@@ -97,9 +98,10 @@ interface TypeObject {
   remark: string
   typeName: string
 }
-const userList = useCounterStore()
+const store = useCounterStore()
 const loading = ref(true)
 const stateBtn = ref(false)
+const dailys = store.dailys
 const selectType = ref([])
 const selectStatus = ref([])
 const searchIp = ref<string>('')
@@ -166,7 +168,7 @@ const getBoardsList = (data: any) => {
           }
           console.log('终端用户：', LocalVue.getLocal('terminal_user'))
           const name = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
-          stateBtn.value = userList.count.includes(name)
+          stateBtn.value = store.count.includes(name)
         }
       }
       setTimeout(() => {

@@ -19,9 +19,15 @@
         </el-tooltip>
       </template>
     </el-table-column>
-    <el-table-column prop="user" label="User" width="130px">
+    <el-table-column prop="user" label="User" width="175px">
       <template #default="scope">
-        {{ scope.row.user ? scope.row.user : '-' }}
+        <span>{{ scope.row.user ? scope.row.user : '-' }}</span>
+        <span v-if="!dailys.includes(scope.row.ip) && scope.row.user">
+          <br />
+          <span>{{ scope.row.startTime }}</span>
+          <el-divider />
+          <span>{{ diffTime(scope.row.startTime) }}</span>
+        </span>
       </template>
     </el-table-column>
     <el-table-column prop="remark" label="Remark" min-width="180" />
@@ -69,17 +75,11 @@ import { ElMessageBox } from 'element-plus'
 import { Boards } from '@/api/api'
 import { LocalVue } from '@/common/utils'
 import loginDialog from '@/components/loginDialog.vue'
-// defineProps({
-//   tableData: {
-//     type: Array,
-//     required: true,
-//     default: []
-//   }
-// })
 defineProps<{
   tableData: Array<object>
   loading: Boolean
   stateBtn: Boolean
+  dailys: Array<string>
 }>()
 const emit = defineEmits(['showDialog', 'getBoardsList'])
 const editHandle = (row: any) => {
@@ -196,6 +196,29 @@ const delRow = (data: any) => {
     })
   })
 }
+const diffTime = (time: any) => {
+  const startT: any = new Date(time)
+  const now: any = new Date()
+  let diffStr: string = 'Occupy '
+  console.log(startT, 'time start')
+  const diff: any = now - startT
+  const diffInDays = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const diffInHours = Math.floor((diff / (1000 * 60 * 60)) % 24)
+  const diffInMinutes = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000))
+  if (diffInDays > 0) {
+    diffStr += `${diffInDays} day `
+  }
+  if (diffInHours > 0) {
+    diffStr += `${diffInHours} h`
+  }
+  if (diffInMinutes > 0) {
+    diffStr += `${diffInMinutes} min`
+  }
+  if (diffStr === 'Occupy ') {
+    diffStr = '0 min'
+  }
+  return diffStr
+}
 </script>
 
 <style scoped>
@@ -213,5 +236,8 @@ a {
 }
 .idle {
   background: #67c23a;
+}
+::v-deep .el-divider {
+  margin: 10px 0;
 }
 </style>

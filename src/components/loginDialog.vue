@@ -13,7 +13,7 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="loginDialogState = false">Cancel</el-button>
+        <el-button @click="onCloseHandle(ruleFormRef)">Cancel</el-button>
         <el-button type="primary" @click="accHandle(ruleFormRef)"> Confirm </el-button>
       </span>
     </template>
@@ -49,6 +49,12 @@ const accHandle = async (formEl: FormInstance | undefined) => {
       console.log('error submit!', fields)
     }
   })
+}
+const onCloseHandle = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+  loginForm['user'] = ''
+  loginDialogState.value = false
 }
 const loginInit = () => {
   loginDialogState.value = true
