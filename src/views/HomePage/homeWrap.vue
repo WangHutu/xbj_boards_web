@@ -73,10 +73,7 @@
         v-model:dialog-form-visible="dialogFormVisible"
         v-model:types="types"
       ></sysdialog>
-      <loginDialog
-        @reloadHandle="reloadHandle"
-        ref="loginDialogRef"
-      ></loginDialog>
+      <loginDialog @reloadHandle="reloadHandle" ref="loginDialogRef"></loginDialog>
     </div>
   </el-scrollbar>
 </template>
@@ -125,7 +122,7 @@ const searchForm = ref<Homeform>({
 const searchhandle = () => {
   getBoardsList(searchForm.value)
 }
-const reloadHandle = ()=> {
+const reloadHandle = () => {
   reload()
 }
 const sysdialogRef = ref<InstanceType<typeof sysdialog>>()
@@ -168,7 +165,7 @@ const getBoardsList = (data: any) => {
     .then((res: any) => {
       if (res.code == '200') {
         if (res.data) {
-          tableData.value = res.data.boardInfo
+          tableData.value = dataFilter(res.data.boardInfo)
           if (res.data.user) {
             LocalVue.setLocal('terminal_user', res.data.user)
           } else {
@@ -189,6 +186,16 @@ const getBoardsList = (data: any) => {
         loading.value = false
       }, 300)
     })
+}
+
+const dataFilter = (data: any) => {
+  const order = ['vek280', 'vck190', 'kv260', 'zcu102']
+  const sortedData = data.slice().sort((a: any, b: any) => {
+    const indexA = order.indexOf(a.type)
+    const indexB = order.indexOf(b.type)
+    return indexA - indexB
+  })
+  return sortedData
 }
 
 onMounted(() => {
