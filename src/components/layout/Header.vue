@@ -1,15 +1,20 @@
 <template>
   <div>
-    <span class="nav_text">Welcome </span>
+    <span class="nav_text">Welcome  </span>
+    <div style="display: inline-block;" v-if="!adminUser && loginUser" >
+      <span class="color_link">{{ loginUser }}</span>
+      |
+      <el-link v-if="loginUser" class="color_link" :underline="false" @click="exitUser()">Exit</el-link>
+    </div>
 
-    <el-link :underline="false" v-if="!adminUser" class="rightText userName" @click="loginUser()"
-      >Login</el-link
+    <el-link :underline="false" v-if="!adminUser" class="rightText color_link" @click="userLogin()"
+      >Admin Login</el-link
     >
 
     <div v-else class="rightText">
-      <span class="userName">{{ adminUser }}</span>
+      <span class="color_link">{{ adminUser }}</span>
       |
-      <el-link class="userName" :underline="false" @click="exitUser()">Exit</el-link>
+      <el-link class="color_link" :underline="false" @click="exitUser()">Exit</el-link>
     </div>
     <userDialog ref="userDialogRef"></userDialog>
   </div>
@@ -17,12 +22,13 @@
 
 <script setup lang="ts">
 import { LocalVue } from '@/common/utils'
-import userDialog from '@/components/userDialog.vue'
+import userDialog from '@/components/adminDialog.vue'
 import { ref, inject } from 'vue'
 const adminUser = ref<string | undefined>(LocalVue.getLocal('adminUser')?.split('"').join(''))
+const loginUser = ref<string | undefined>(LocalVue.getLocal('user')?.split('"').join(''))
 const userDialogRef = ref<InstanceType<typeof userDialog>>()
 const reload: any = inject('reload')
-const loginUser = () => {
+const userLogin = () => {
   userDialogRef.value?.userInit()
 }
 
@@ -37,7 +43,7 @@ const exitUser = () => {
 .nav_text {
   font-weight: bold;
 }
-.userName {
+.color_link {
   color: #409eff;
 }
 .rightText {
