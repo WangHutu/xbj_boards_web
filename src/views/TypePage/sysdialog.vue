@@ -73,14 +73,12 @@ const submitDialog = async (formEl: FormInstance | undefined) => {
 const submitHandle = () => {
   if (dialogTitle.value == 'Edit Type') {
     Boards.updateTypeList(formData).then((res: any) => {
-      console.log(res, 'res')
       if (res.code == 200) {
         emit('getTypeList', '')
       }
     })
   } else {
     Boards.insertTypeList(formData).then((res: any) => {
-      console.log(res, 'res')
       if (res.code == 200) {
         emit('getTypeList', '')
       }

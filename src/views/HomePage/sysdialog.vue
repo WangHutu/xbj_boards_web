@@ -118,7 +118,6 @@ const submitDialog = async (formEl: FormInstance | undefined) => {
   })
 }
 const submitHandle = (formEl: FormInstance | undefined) => {
-  console.log(dialogTitle.value, 'dialogTitle.value')
   const adminUser = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
   formData['status'] = state.value ? 'occupy' : 'vacant'
   if (dialogTitle.value == 'Edit Board') {
@@ -141,7 +140,6 @@ const submitHandle = (formEl: FormInstance | undefined) => {
     }
     Boards.insertBoardList(formData)
       .then((res: any) => {
-        console.log(res, 'res')
         if (res.code == 200) {
           emit('getBoardsList', '')
           onCloseHandle(formEl)

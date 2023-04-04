@@ -100,6 +100,7 @@ interface TypeObject {
 }
 const reload: any = inject('reload')
 const loginUser = ref<string | undefined>(LocalVue.getLocal('user')?.split('"').join(''))
+const adminUser = ref<string | undefined>(LocalVue.getLocal('adminUser')?.split('"').join(''))
 const store = useCounterStore()
 const loading = ref(true)
 const stateBtn = ref(false)
@@ -172,7 +173,6 @@ const getBoardsList = (data: any) => {
             ElMessage.error('没有获取到终端用户！')
           }
           console.log('终端用户：', LocalVue.getLocal('terminal_user'))
-          console.log('用户：', LocalVue.getLocal('user'))
           const name = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
           stateBtn.value = store.count.includes(name)
         }
@@ -201,7 +201,7 @@ const dataFilter = (data: any) => {
 onMounted(() => {
   getTypeList('')
   getBoardsList('')
-  if (!loginUser.value) {
+  if (!loginUser.value && !adminUser.value) {
     loginDialogRef.value?.loginInit()
   }
 })

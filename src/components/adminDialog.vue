@@ -39,7 +39,6 @@ const reload: any = inject('reload')
 const ruleFormRef = ref<FormInstance>()
 const userDialogState = ref(false)
 const validatePass = (rule: any, value: any, callback: any) => {
-  console.log(loginForm.admin, 'loginForm.admin')
   if (loginForm.admin === '') {
     callback(new Error('Please input admin'))
   } else if (!userList.count.includes(loginForm.admin)) {

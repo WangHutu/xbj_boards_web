@@ -62,19 +62,13 @@
       </template>
     </el-table-column>
   </el-table>
-  <!-- <loginDialog
-    @getBoardsList="reloadBoardsList"
-    @occhandle="operaHandle"
-    ref="loginDialogRef"
-  ></loginDialog> -->
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import { ElMessageBox } from 'element-plus'
 import { Boards } from '@/api/api'
 import { LocalVue } from '@/common/utils'
-import loginDialog from '@/components/loginDialog.vue'
 defineProps<{
   tableData: Array<object>
   loading: Boolean
@@ -155,7 +149,6 @@ const operaHandle = (data: any, opereState: any) => {
       }
     ).then(() => {
       Boards.occBoard(row).then((res: any) => {
-        console.log(res, 'res')
         if (res.code == 200) {
           reloadBoardsList()
         }
@@ -201,7 +194,6 @@ const delRow = (data: any) => {
     }
   ).then(() => {
     Boards.delBoardList(row).then((res: any) => {
-      console.log(res, 'res')
       if (res.code == 200) {
         reloadBoardsList()
       }
@@ -212,7 +204,6 @@ const diffTime = (time: any) => {
   const startT: any = new Date(time)
   const now: any = new Date()
   let diffStr: string = 'Occupy '
-  console.log(startT, 'time start')
   const diff: any = now - startT
   const diffInDays = Math.floor(diff / (1000 * 60 * 60 * 24))
   const diffInHours = Math.floor((diff / (1000 * 60 * 60)) % 24)

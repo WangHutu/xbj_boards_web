@@ -123,7 +123,6 @@ const submitForm = (formEl: any) => {
     if (valid) {
       console.log('submit!')
       if (tabState.value === 'Login') {
-        console.log(ruleForm,'登陆参数')
         UserService.userLoginApi(ruleForm).then((res: any) => {
           if (res.code == '200') {
             if (res.data.info) {
@@ -137,7 +136,6 @@ const submitForm = (formEl: any) => {
           
         })
       } else {
-        console.log(ruleForm,'注册参数')
         UserService.userRegisterApi(ruleForm).then((res: any) => {
           if (res.code == '200') {
             changeTab('Login')

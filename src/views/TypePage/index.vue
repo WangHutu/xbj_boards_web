@@ -111,7 +111,6 @@ const getTypeList = (data: any) => {
           } else {
             ElMessage.error('没有获取到终端用户！')
           }
-          console.log('终端用户：', LocalVue.getLocal('terminal_user'))
           const name = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
           stateBtn.value = userList.count.includes(name)
       }

@@ -24,12 +24,14 @@
 import { ref, reactive } from 'vue'
 import { LocalVue } from '@/common/utils'
 import type { FormInstance, FormRules } from 'element-plus'
+import { useCounterStore } from '@/stores/counter'
 interface Dialogform {
   user: string
 }
 const loginForm = reactive<Dialogform>({
   user: ''
 })
+const store = useCounterStore()
 const emit = defineEmits(['getBoardsList', 'occhandle', 'reloadHandle'])
 const ruleFormRef = ref<FormInstance>()
 const loginDialogState = ref(false)
@@ -40,8 +42,13 @@ const accHandle = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      console.log('输入的用户：', loginForm.user)
-      LocalVue.setLocal('user', loginForm.user)
+      const isAdmin = store.count.includes(loginForm.user)
+      if (isAdmin) {
+        LocalVue.setLocal('adminUser', loginForm.user)
+      }else {
+        LocalVue.setLocal('user', loginForm.user)
+      }
+      
       emit('reloadHandle', '')
       // emit('getBoardsList', '')
       // emit('occhandle', loginForm.user, 1)
