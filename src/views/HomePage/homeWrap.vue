@@ -81,7 +81,7 @@
 <script setup lang="ts">
 import { ref, onMounted, inject } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import { Boards } from '@/api/api'
+import { Boards, Admin } from '@/api/api'
 import systable from './systable.vue'
 import sysdialog from './sysdialog.vue'
 import loginDialog from '@/components/loginDialog.vue'
@@ -159,6 +159,20 @@ const getTypeList = (data: any) => {
   })
 }
 
+const getAdminList = (data: any) => {
+  Admin.getAdminList(data).then((res: any) => {
+    if (res.code == '200') {
+      if (res.data) {
+        const list = res.data.adminInfo.map((item: any) => {
+          return item.admin
+        })
+        store.countChange(list)
+        console.log(store.count, '管理员列表')
+      }
+    }
+  })
+}
+
 const getBoardsList = (data: any) => {
   loading.value = true
   LocalVue.removeLocal('terminal_user')
@@ -201,6 +215,7 @@ const dataFilter = (data: any) => {
 onMounted(() => {
   getTypeList('')
   getBoardsList('')
+  getAdminList('')
   if (!loginUser.value && !adminUser.value) {
     loginDialogRef.value?.loginInit()
   }

@@ -6,7 +6,7 @@
     :show-close="false"
     width="600px"
   >
-    <el-form :model="formData" ref="ruleFormRef" :rules="rules" label-width="115px">
+    <el-form :model="formData" ref="ruleFormRef" :rules="rules" label-width="115px" @submit.prevent>
       <el-form-item label="Type: " prop="type">
         <el-select v-model="formData.type" placeholder="Please select a type">
           <el-option

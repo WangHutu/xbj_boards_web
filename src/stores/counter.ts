@@ -3,16 +3,15 @@ import { defineStore } from 'pinia'
 
 export const useCounterStore = defineStore('counter', () => {
   const count = ref<Array<string>>([
-    'allanhan',
-    'peiyueh',
-    'qianglin',
-    'linqiang',
-    'jasonjia',
     'runfengw',
     'yanjunz',
     'huizhang',
     'qingz'
   ])
+
+  function countChange(data:any) {
+    count.value = data
+  }
 
   const adminUser = ref<Array<string>>([
     'runfengw',
@@ -31,5 +30,5 @@ export const useCounterStore = defineStore('counter', () => {
     '10.176.179.98'
   ])
 
-  return { count, dailys, adminUser }
+  return { count, dailys, adminUser, countChange }
 })

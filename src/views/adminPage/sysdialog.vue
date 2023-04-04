@@ -6,7 +6,7 @@
     :show-close="false"
     width="600px"
   >
-    <el-form :model="formData" ref="ruleFormRef" :rules="rules" :label-width="formLabelWidth">
+    <el-form :model="formData" ref="ruleFormRef" :rules="rules" :label-width="formLabelWidth" @submit.prevent>
       <el-form-item label="Admin: " prop="admin">
         <el-input
           v-model="formData.admin"

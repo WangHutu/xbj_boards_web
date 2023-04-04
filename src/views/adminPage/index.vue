@@ -105,6 +105,11 @@ const getAdminList = (data: any) => {
     if (res.code == '200') {
       if (res.data) {
         tableData.value = res.data.adminInfo
+        const list = res.data.adminInfo.map((item: any) => {
+          return item.admin
+        })
+        store.countChange(list)
+        console.log(store.count, '管理员列表')
         if (res.data.user) {
             LocalVue.setLocal('terminal_user', res.data.user)
           } else {
