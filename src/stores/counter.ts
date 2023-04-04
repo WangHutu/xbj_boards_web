@@ -14,6 +14,13 @@ export const useCounterStore = defineStore('counter', () => {
     'qingz'
   ])
 
+  const adminUser = ref<Array<string>>([
+    'runfengw',
+    'yanjunz',
+    'huizhang',
+    'qingz'
+  ])
+
   const dailys = ref<Array<string>>([
     '10.176.179.103',
     '10.176.179.108',
@@ -24,5 +31,5 @@ export const useCounterStore = defineStore('counter', () => {
     '10.176.179.98'
   ])
 
-  return { count, dailys }
+  return { count, dailys, adminUser }
 })

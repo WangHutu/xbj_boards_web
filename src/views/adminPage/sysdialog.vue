@@ -7,11 +7,11 @@
     width="600px"
   >
     <el-form :model="formData" ref="ruleFormRef" :rules="rules" :label-width="formLabelWidth">
-      <el-form-item label="Type: " prop="typeName">
+      <el-form-item label="Admin: " prop="admin">
         <el-input
-          v-model="formData.typeName"
+          v-model="formData.admin"
           autocomplete="off"
-          :disabled="dialogTitle == 'Edit Type'"
+          :disabled="dialogTitle == 'Edit Admin'"
           placeholder="Please input"
           @keyup.enter="submitDialog(ruleFormRef)"
         />
@@ -31,32 +31,32 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { Boards } from '@/api/api'
+import { Admin } from '@/api/api'
 import type { FormInstance, FormRules } from 'element-plus'
 interface Dialogform {
   id: string
-  typeName: string
+  admin: string
   remark: string
 }
-const dialogTitle = ref<string>('New Type')
+const dialogTitle = ref<string>('New Admin')
 const ruleFormRef = ref<FormInstance>()
 const formLabelWidth = '60px'
 const dialogFormVisible = ref(false)
-const emit = defineEmits(['getTypeList'])
+const emit = defineEmits(['getAdminList'])
 const formData = reactive<Dialogform>({
   id: '',
-  typeName: '',
+  admin: '',
   remark: ''
 })
 const rules = reactive<FormRules>({
-  typeName: [{ required: true, message: 'Please input Type name', trigger: 'blur' }]
+  admin: [{ required: true, message: 'Please input name', trigger: 'blur' }]
 })
 const onCloseHandle = (formEl: FormInstance | undefined) => {
-  dialogTitle.value = 'New Type'
+  dialogTitle.value = 'New Admin'
   if (!formEl) return
   formEl.resetFields()
   formData['id'] = ''
-  formData['typeName'] = ''
+  formData['admin'] = ''
   formData['remark'] = ''
   dialogFormVisible.value = false
 }
@@ -72,32 +72,32 @@ const submitDialog = async (formEl: FormInstance | undefined) => {
   })
 }
 const submitHandle = () => {
-  if (dialogTitle.value == 'Edit Type') {
-    Boards.updateTypeList(formData).then((res: any) => {
+  if (dialogTitle.value == 'Edit Admin') {
+    Admin.updateAdminList(formData).then((res: any) => {
       if (res.code == 200) {
-        emit('getTypeList', '')
+        emit('getAdminList', '')
       }
     })
   } else {
-    Boards.insertTypeList(formData).then((res: any) => {
+    Admin.insertAdminList(formData).then((res: any) => {
       if (res.code == 200) {
-        emit('getTypeList', '')
+        emit('getAdminList', '')
       }
     })
   }
 }
 const dilogInit = (data?: any): void => {
   if (data) {
-    const { typeName, remark, id } = JSON.parse(JSON.stringify(data))
+    const { admin, remark, id } = JSON.parse(JSON.stringify(data))
     formData['id'] = id
-    formData['typeName'] = typeName
+    formData['admin'] = admin
     formData['remark'] = remark
-    dialogTitle.value = 'Edit Type'
+    dialogTitle.value = 'Edit Admin'
   } else {
     formData['id'] = ''
-    formData['typeName'] = ''
+    formData['admin'] = ''
     formData['remark'] = ''
-    dialogTitle.value = 'New Type'
+    dialogTitle.value = 'New Admin'
   }
   dialogFormVisible.value = true
 }

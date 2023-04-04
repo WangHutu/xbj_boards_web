@@ -34,14 +34,14 @@ interface Dialogform {
 const loginForm = reactive<Dialogform>({
   admin: ''
 })
-const userList = useCounterStore()
+const store = useCounterStore()
 const reload: any = inject('reload')
 const ruleFormRef = ref<FormInstance>()
 const userDialogState = ref(false)
 const validatePass = (rule: any, value: any, callback: any) => {
   if (loginForm.admin === '') {
     callback(new Error('Please input admin'))
-  } else if (!userList.count.includes(loginForm.admin)) {
+  } else if (!store.count.includes(loginForm.admin)) {
     callback(new Error('The administrator does not exist.'))
   } else {
     callback()

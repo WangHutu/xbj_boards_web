@@ -14,16 +14,22 @@
     </el-menu-item>
     <el-menu-item index="/type">
       <el-icon>
-        <Document />
+        <More />
       </el-icon>
       <template #title>Type</template>
     </el-menu-item>
+    <el-menu-item index="/admin">
+      <el-icon>
+        <User />
+      </el-icon>
+      <template #title>Admin</template>
+    </el-menu-item>
     <el-menu-item index="/logs">
-            <el-icon>
-                <User />
-            </el-icon>
-            <template #title>Log</template>
-        </el-menu-item>
+      <el-icon>
+        <Tickets />
+      </el-icon>
+      <template #title>Log</template>
+    </el-menu-item>
   </el-menu>
 </template>
 

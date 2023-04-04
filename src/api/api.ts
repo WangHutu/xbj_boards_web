@@ -78,3 +78,31 @@ export class Boards {
     return request('/getLogList', params, 'get')
   }
 }
+
+
+export class Admin {
+  /**
+   * @description 获取地列表
+   * @return {HttpResponse} result
+   */
+
+  // 查询admin信息列表
+  static async getAdminList(params: any) {
+    return request('/getAdminList', params, 'get')
+  }
+
+  // 增加admin信息列表
+  static async insertAdminList(params: any) {
+    return request('/insertAdminList', params, 'post')
+  }
+
+  // 修改admin信息列表
+  static async updateAdminList(params: any) {
+    return request('/updateAdminList', params, 'post')
+  }
+
+  // 删除admin信息列表
+  static async delAdminList(params: any) {
+    return request('/delAdminList', params, 'post')
+  }
+}

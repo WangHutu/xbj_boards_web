@@ -6,10 +6,10 @@
           <el-col :span="10" style="padding-right: 20px">
             <el-input
               :suffix-icon="Search"
-              :model-value="selectType.typeName"
-              placeholder="Enter Type to search"
+              :model-value="selectAdmin.admin"
+              placeholder="Enter Admin to search"
               clearable
-              @input="change('type', $event)"
+              @input="change('admin', $event)"
               @keyup.enter="searchHandle"
             />
           </el-col>
@@ -19,17 +19,17 @@
         </el-row>
       </div>
       <el-table v-loading="loading" :data="tableData" stripe border style="width: 100%">
-        <el-table-column prop="typeName" label="Type" min-width="150" />
+        <el-table-column prop="admin" label="Admin" min-width="150" />
         <el-table-column prop="remark" label="Remark" min-width="180" />
         <el-table-column v-if="stateBtn" label="operate " width="150px" align="center">
           <template #default="scope">
-            <el-link type="primary" :underline="false" @click="showDialog(scope.row)">Edit</el-link>
-            <el-link type="primary" :underline="false" @click="delRow(scope.row)">Del</el-link>
+            <el-link v-if="!store.adminUser.includes(scope.row.admin)" type="primary" :underline="false" @click="showDialog(scope.row)">Edit</el-link>
+            <el-link v-if="!store.adminUser.includes(scope.row.admin)" type="primary" :underline="false" @click="delRow(scope.row)">Del</el-link>
           </template>
         </el-table-column>
       </el-table>
       <sysdialog
-        @getTypeList="getTypeList"
+        @getAdminList="getAdminList"
         ref="sysdialogRef"
         v-model:dialog-form-visible="dialogFormVisible"
       ></sysdialog>
@@ -42,20 +42,20 @@ import { ref, reactive, onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessageBox } from 'element-plus'
 import sysdialog from './sysdialog.vue'
-import { Boards } from '@/api/api'
+import { Admin } from '@/api/api'
 import { LocalVue } from '@/common/utils'
 import { useCounterStore } from '@/stores/counter'
 import { ElMessage } from 'element-plus'
 
-const selectType = ref({
-  typeName: ''
+const selectAdmin = ref({
+  admin: ''
 })
 const loading = ref(true)
 const store = useCounterStore()
 const stateBtn = ref(false)
 const row = reactive({
   id: '',
-  typeName: '',
+  admin: '',
   remark: ''
 })
 const tableData = ref([])
@@ -65,30 +65,30 @@ const showDialog = (data?: any) => {
   sysdialogRef.value?.dilogInit(data)
 }
 const delRow = (data: any) => {
-  const { typeName, remark, id } = data
+  const { admin, remark, id } = data
   row['id'] = id
-  row['typeName'] = typeName
+  row['admin'] = admin
   row['remark'] = remark
-  ElMessageBox.confirm(`Are you sure you want to remove the 【 ${data.typeName} 】?`, 'Delete', {
+  ElMessageBox.confirm(`Are you sure you want to remove the 【 ${data.admin} 】?`, 'Delete', {
     confirmButtonText: 'OK',
     cancelButtonText: 'Cancel',
     type: 'warning'
   }).then(() => {
-    Boards.delTypeList(row).then((res:any)=>{
+    Admin.delAdminList(row).then((res:any)=>{
       console.log(res, 'res')
       if (res.code == 200) {
-        getTypeList('')
+        getAdminList('')
       }
     })
   })
 }
 
 const searchHandle = () => {
-  getTypeList(selectType.value)
+  getAdminList(selectAdmin.value)
 }
 const change = (val: String, event: any) => {
-  if (val === 'type') {
-    selectType.value.typeName = event
+  if (val === 'admin') {
+    selectAdmin.value.admin = event
     let timer: any = null
     if (timer != null) {
       clearTimeout(timer)
@@ -98,21 +98,20 @@ const change = (val: String, event: any) => {
   }
 }
 
-const getTypeList = (data: any) => {
+const getAdminList = (data: any) => {
   loading.value = true
   LocalVue.removeLocal('terminal_user')
-  Boards.getTypeList(data).then((res: any) => {
-    // console.log(res, 'res')
+  Admin.getAdminList(data).then((res: any) => {
     if (res.code == '200') {
       if (res.data) {
-        tableData.value = res.data.typeInfo
+        tableData.value = res.data.adminInfo
         if (res.data.user) {
             LocalVue.setLocal('terminal_user', res.data.user)
           } else {
             ElMessage.error('没有获取到终端用户！')
           }
           const name = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
-          stateBtn.value = store.count.includes(name)
+          stateBtn.value = store.adminUser.includes(name)
       }
     }
     setTimeout(()=>{
@@ -127,7 +126,7 @@ const getTypeList = (data: any) => {
 
 onMounted(() => {
   loading.value = true
-  getTypeList(selectType.value)
+  getAdminList(selectAdmin.value)
 })
 </script>
 
