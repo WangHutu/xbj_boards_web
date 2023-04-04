@@ -166,7 +166,12 @@ const getAdminList = (data: any) => {
         const list = res.data.adminInfo.map((item: any) => {
           return item.admin
         })
-        store.countChange(list)
+        if (list.length) {
+          store.countChange(list)
+        } else {
+          store.countChange('runfengw')
+        }
+        
         console.log(store.count, '管理员列表')
       }
     }
