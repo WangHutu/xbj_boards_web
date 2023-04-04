@@ -11,7 +11,7 @@
     </template>
     <el-form :model="loginForm" ref="ruleFormRef" :rules="rules" label-width="60px" @submit.prevent>
       <el-form-item label="admin" prop="admin">
-        <el-input v-model="loginForm.admin" autocomplete="off" />
+        <el-input v-model="loginForm.admin" autocomplete="off" @keyup.enter="accHandle(ruleFormRef)"/>
       </el-form-item>
     </el-form>
     <template #footer>

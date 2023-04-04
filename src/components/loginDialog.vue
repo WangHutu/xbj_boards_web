@@ -8,7 +8,7 @@
   >
     <el-form :model="loginForm" ref="ruleFormRef" :rules="rules" label-width="60px" @submit.prevent>
       <el-form-item label="user" prop="user">
-        <el-input v-model="loginForm.user" autocomplete="off" />
+        <el-input v-model="loginForm.user" autocomplete="off" @keyup.enter="accHandle(ruleFormRef)"/>
       </el-form-item>
     </el-form>
     <template #footer>
