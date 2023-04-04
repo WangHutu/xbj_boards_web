@@ -6,6 +6,7 @@ export const useCounterStore = defineStore('counter', () => {
     'allanhan',
     'peiyueh',
     'qianglin',
+    'linqiang',
     'jasonjia',
     'runfengw',
     'yanjunz',

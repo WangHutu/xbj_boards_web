@@ -13,13 +13,15 @@
 <script setup lang="ts">
 import { LocalVue } from '@/common/utils'
 import { ref, inject } from 'vue'
+import { useRouter } from 'vue-router'
 const adminUser = ref<string | undefined>(LocalVue.getLocal('adminUser')?.split('"').join(''))
 const loginUser = ref<string | undefined>(LocalVue.getLocal('user')?.split('"').join(''))
 const reload: any = inject('reload')
-
+const router = useRouter()
 const exitUser = () => {
   LocalVue.removeLocal('user')
   LocalVue.removeLocal('adminUser')
+  router.push('/')
   reload()
 }
 </script>
