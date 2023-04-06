@@ -66,6 +66,7 @@
             v-model:loading="loading"
             v-model:stateBtn="stateBtn"
             v-model:dailys="dailys"
+            v-model:ipList="ipList"
             @showDialog="showDialog"
             @getBoardsList="getBoardsList"
           ></systable
@@ -87,7 +88,7 @@
 <script setup lang="ts">
 import { ref, onMounted, inject } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import { Boards, Admin } from '@/api/api'
+import { Boards, Admin, Power } from '@/api/api'
 import systable from './systable.vue'
 import sysdialog from './sysdialog.vue'
 import loginDialog from '@/components/loginDialog.vue'
@@ -122,6 +123,8 @@ const searchIp = ref<string>('')
 const dialogFormVisible = ref(false)
 const tableData = ref([])
 const types = ref<Array<TypeObject>>([])
+const powerList = ref<Array<TypeObject>>([])
+const ipList = ref<Array<string>>([])
 const status = [
   { value: 'vacant', label: 'Idle' },
   { value: 'occupy', label: 'Inuse' }
@@ -160,6 +163,16 @@ const change = (val: String, event: any) => {
     timer = setTimeout(searchhandle, 300)
   }
 }
+const getPowerList = (data: any) => {
+  Power.getPowerList(data).then((res: any) => {
+    if (res.code == '200') {
+      if (res.data) {
+        powerList.value = res.data.powerList
+        ipList.value = Object.keys(powerList.value)
+      }
+    }
+  })
+}
 const getTypeList = (data: any) => {
   Boards.getTypeList(data).then((res: any) => {
     if (res.code == '200') {
@@ -182,8 +195,6 @@ const getAdminList = (data: any) => {
         } else {
           store.countChange(store.adminUser)
         }
-        
-        console.log(store.count, '管理员列表')
       }
     }
   })
@@ -228,11 +239,13 @@ const dataFilter = (data: any) => {
   return sortedData
 }
 
-onMounted(() => {
-  LocalVue.clearLocal()
+onMounted(async () => {
+  // LocalVue.clearLocal()
+  await getAdminList('')
+  await getPowerList('')
   getTypeList('')
   getBoardsList('')
-  getAdminList('')
+
   if (!loginUser.value && !adminUser.value) {
     loginDialogRef.value?.loginInit()
   }

@@ -48,6 +48,13 @@
           @click="operaHandle(scope.row, 1)"
           >Occupy</el-link
         >
+        <el-link
+          v-if="ipList.includes(scope.row.ip)"
+          type="primary"
+          :underline="false"
+          @click="restartBoard(scope.row.ip)"
+          >PowerCycle</el-link
+        >
         <el-link v-if="stateBtn" type="primary" :underline="false" @click="editHandle(scope.row)"
           >Edit</el-link
         >
@@ -67,13 +74,14 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import { ElMessageBox } from 'element-plus'
-import { Boards } from '@/api/api'
+import { Boards, Power } from '@/api/api'
 import { LocalVue } from '@/common/utils'
 defineProps<{
   tableData: Array<object>
   loading: Boolean
   stateBtn: Boolean
   dailys: Array<string>
+  ipList: Array<string>
 }>()
 const emit = defineEmits(['showDialog', 'getBoardsList'])
 const editHandle = (row: any) => {
@@ -221,6 +229,17 @@ const diffTime = (time: any) => {
     diffStr = '0 min'
   }
   return diffStr
+}
+
+const restartBoard = (ip:any) => {
+  console.log(ip)
+  Power.restartBoard({ip}).then((res: any) => {
+    if (res.code == '200') {
+      if (res.data) {
+        // ### ...
+      }
+    }
+  })
 }
 </script>
 

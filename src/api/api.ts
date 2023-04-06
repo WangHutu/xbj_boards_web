@@ -106,3 +106,20 @@ export class Admin {
     return request('/delAdminList', params, 'post')
   }
 }
+
+export class Power {
+  /**
+   * @description 获取地列表
+   * @return {HttpResponse} result
+   */
+
+  // power ip 列表
+  static async getPowerList(params: any) {
+    return request('/getPowerList', params, 'get')
+  }
+
+  // restartBoard
+  static async restartBoard(params: any) {
+    return request('/restartBoard', params, 'post')
+  }
+}

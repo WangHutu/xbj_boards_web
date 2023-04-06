@@ -113,7 +113,6 @@ const getAdminList = (data: any) => {
         } else {
           store.countChange(store.adminUser)
         }
-        console.log(store.count, '管理员列表')
         if (res.data.user) {
             LocalVue.setLocal('terminal_user', res.data.user)
           } else {
