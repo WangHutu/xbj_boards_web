@@ -49,7 +49,7 @@
           >Occupy</el-link
         >
         <el-link
-          v-if="ipList.includes(scope.row.ip) && scope.row.user == 'runfengw'"
+          v-if="ipList.includes(scope.row.ip)"
           type="primary"
           :underline="false"
           @click="restartBoard(scope.row.ip)"
@@ -72,8 +72,8 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
-import { ElMessageBox } from 'element-plus'
+import { reactive, h } from 'vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import { Boards, Power } from '@/api/api'
 import { LocalVue } from '@/common/utils'
 defineProps<{
@@ -231,12 +231,14 @@ const diffTime = (time: any) => {
   return diffStr
 }
 
-const restartBoard = (ip:any) => {
-  console.log(ip)
-  Power.restartBoard({ip}).then((res: any) => {
+const restartBoard = (ip: any) => {
+  Power.restartBoard({ ip }).then((res: any) => {
     if (res.code == '200') {
       if (res.data) {
-        // ### ...
+        const str = res.data.powerList.split('Reboot')[1]
+        ElMessage({
+          message: h('p', null, [h('span', null, str)])
+        })
       }
     }
   })
