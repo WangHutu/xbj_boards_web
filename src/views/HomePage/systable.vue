@@ -49,7 +49,7 @@
           >Occupy</el-link
         >
         <el-link
-          v-if="ipList.includes(scope.row.ip)"
+          v-if="ipList.includes(scope.row.ip) && scope.row.user == 'runfengw'"
           type="primary"
           :underline="false"
           @click="restartBoard(scope.row.ip)"
