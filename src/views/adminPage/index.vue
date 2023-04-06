@@ -111,7 +111,7 @@ const getAdminList = (data: any) => {
         if (list.length) {
           store.countChange(list)
         } else {
-          store.countChange('runfengw')
+          store.countChange(store.adminUser)
         }
         console.log(store.count, '管理员列表')
         if (res.data.user) {

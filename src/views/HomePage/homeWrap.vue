@@ -59,14 +59,20 @@
           <span>In use</span>
         </div>
       </div>
-      <systable
-        v-model:tableData="tableData"
-        v-model:loading="loading"
-        v-model:stateBtn="stateBtn"
-        v-model:dailys="dailys"
-        @showDialog="showDialog"
-        @getBoardsList="getBoardsList"
-      ></systable>
+      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+        <el-tab-pane label="first" name="first"
+          ><systable
+            v-model:tableData="tableData"
+            v-model:loading="loading"
+            v-model:stateBtn="stateBtn"
+            v-model:dailys="dailys"
+            @showDialog="showDialog"
+            @getBoardsList="getBoardsList"
+          ></systable
+        ></el-tab-pane>
+        <el-tab-pane label="daliy" name="second">daliy</el-tab-pane>
+      </el-tabs>
+
       <sysdialog
         @getBoardsList="getBoardsList"
         ref="sysdialogRef"
@@ -88,6 +94,7 @@ import loginDialog from '@/components/loginDialog.vue'
 import { LocalVue } from '@/common/utils'
 import { useCounterStore } from '@/stores/counter'
 import { ElMessage } from 'element-plus'
+import type { TabsPaneContext } from 'element-plus'
 
 interface Homeform {
   type: Array<string>
@@ -97,6 +104,10 @@ interface Homeform {
 interface TypeObject {
   remark: string
   typeName: string
+}
+const activeName = ref('first')
+const handleClick = (tab: TabsPaneContext, event: Event) => {
+  console.log(tab, event)
 }
 const reload: any = inject('reload')
 const loginUser = ref<string | undefined>(LocalVue.getLocal('user')?.split('"').join(''))
@@ -169,7 +180,7 @@ const getAdminList = (data: any) => {
         if (list.length) {
           store.countChange(list)
         } else {
-          store.countChange('runfengw')
+          store.countChange(store.adminUser)
         }
         
         console.log(store.count, '管理员列表')
@@ -218,6 +229,7 @@ const dataFilter = (data: any) => {
 }
 
 onMounted(() => {
+  LocalVue.clearLocal()
   getTypeList('')
   getBoardsList('')
   getAdminList('')
