@@ -67,6 +67,7 @@
             v-model:stateBtn="stateBtn"
             v-model:dailys="dailys"
             v-model:ipList="ipList"
+            v-model:powerList="powerList"
             @showDialog="showDialog"
             @getBoardsList="getBoardsList"
           ></systable
@@ -123,7 +124,7 @@ const searchIp = ref<string>('')
 const dialogFormVisible = ref(false)
 const tableData = ref([])
 const types = ref<Array<TypeObject>>([])
-const powerList = ref<Array<TypeObject>>([])
+const powerList = ref<Object>([])
 const ipList = ref<Array<string>>([])
 const status = [
   { value: 'vacant', label: 'Idle' },

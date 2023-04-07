@@ -67,9 +67,38 @@
           @click="restartBoard(scope.row.ip)"
           >PowerCycle</el-link
         >
+        <el-link
+          v-if="powerList[scope.row.ip]?.serial"
+          type="primary"
+          :underline="false"
+          @click="flashImage(scope.row.ip)"
+          >FlashImage</el-link
+        >
       </template>
     </el-table-column>
   </el-table>
+  <el-dialog
+    :close-on-click-modal="false"
+    :show-close="false"
+    :model-value="imageDirState"
+    title="Please enter an administrator account to maintain system information."
+    width="600px"
+  >
+    <template #title >
+      <span >Please enter an administrator account to maintain system information.</span>
+    </template>
+    <el-form :model="imageForm" ref="ruleFormRef" :rules="rules" label-width="60px" @submit.prevent>
+      <el-form-item label="image" prop="image">
+        <el-input v-model="imageForm.image" autocomplete="off" @keyup.enter="accHandle(ruleFormRef)"/>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="onCloseHandle(ruleFormRef)">Cancel</el-button>
+        <el-button type="primary" @click="accHandle(ruleFormRef)"> Confirm </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -83,6 +112,7 @@ defineProps<{
   stateBtn: Boolean
   dailys: Array<string>
   ipList: Array<string>
+  powerList: Object
 }>()
 const emit = defineEmits(['showDialog', 'getBoardsList'])
 const editHandle = (row: any) => {
@@ -137,7 +167,10 @@ const reloadBoardsList = () => {
   emit('getBoardsList', '')
 }
 const operaHandle = (data: any, opereState: any) => {
-  row['opearUser'] = LocalVue.getLocal('adminUser')?.split('"').join('') || LocalVue.getLocal('user')?.split('"').join('') || ''
+  row['opearUser'] =
+    LocalVue.getLocal('adminUser')?.split('"').join('') ||
+    LocalVue.getLocal('user')?.split('"').join('') ||
+    ''
   const adminUser = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
   const loginUser = LocalVue.getLocal('user')?.split('"').join('') || ''
   const { type, ip, remark, id, number, image } = data
@@ -187,7 +220,10 @@ const operaHandle = (data: any, opereState: any) => {
   }
 }
 const delRow = (data: any) => {
-  row['opearUser'] = LocalVue.getLocal('adminUser')?.split('"').join('') || LocalVue.getLocal('user')?.split('"').join('') || ''
+  row['opearUser'] =
+    LocalVue.getLocal('adminUser')?.split('"').join('') ||
+    LocalVue.getLocal('user')?.split('"').join('') ||
+    ''
   const { type, ip, status, remark, id, number, image } = data
   row['id'] = id
   row['type'] = type
@@ -236,6 +272,19 @@ const diffTime = (time: any) => {
 }
 
 const restartBoard = (ip: any) => {
+  Power.restartBoard({ ip }).then((res: any) => {
+    if (res.code == '200') {
+      if (res.data) {
+        const str = res.data.powerList.split('Reboot')[1]
+        ElMessage({
+          message: h('p', null, [h('span', null, str)])
+        })
+      }
+    }
+  })
+}
+
+const flashImage = (ip: any) => {
   Power.restartBoard({ ip }).then((res: any) => {
     if (res.code == '200') {
       if (res.data) {
