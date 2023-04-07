@@ -66,6 +66,7 @@ interface Dialogform {
   status: string
   remark: string
   user: string
+  opearUser: string
 }
 const formData = reactive<Dialogform>({
   id: '',
@@ -76,7 +77,8 @@ const formData = reactive<Dialogform>({
   oldIp: '',
   status: 'vacant',
   remark: '',
-  user: ''
+  user: '',
+  opearUser: ''
 })
 const state = ref(false)
 const oldState = ref(false)
@@ -118,6 +120,7 @@ const submitDialog = async (formEl: FormInstance | undefined) => {
   })
 }
 const submitHandle = (formEl: FormInstance | undefined) => {
+  formData['opearUser'] = LocalVue.getLocal('adminUser')?.split('"').join('') || LocalVue.getLocal('user')?.split('"').join('') || ''
   const adminUser = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
   formData['status'] = state.value ? 'occupy' : 'vacant'
   if (dialogTitle.value == 'Edit Board') {

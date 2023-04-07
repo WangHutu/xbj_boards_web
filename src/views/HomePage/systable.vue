@@ -96,7 +96,8 @@ const row = reactive({
   image: '',
   status: '',
   remark: '',
-  user: ''
+  user: '',
+  opearUser: ''
 })
 // const loginDialogRef = ref<InstanceType<typeof loginDialog>>()
 // const occhandle = (data: any) => {
@@ -136,6 +137,7 @@ const reloadBoardsList = () => {
   emit('getBoardsList', '')
 }
 const operaHandle = (data: any, opereState: any) => {
+  row['opearUser'] = LocalVue.getLocal('adminUser')?.split('"').join('') || LocalVue.getLocal('user')?.split('"').join('') || ''
   const adminUser = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
   const loginUser = LocalVue.getLocal('user')?.split('"').join('') || ''
   const { type, ip, remark, id, number, image } = data
@@ -185,6 +187,7 @@ const operaHandle = (data: any, opereState: any) => {
   }
 }
 const delRow = (data: any) => {
+  row['opearUser'] = LocalVue.getLocal('adminUser')?.split('"').join('') || LocalVue.getLocal('user')?.split('"').join('') || ''
   const { type, ip, status, remark, id, number, image } = data
   row['id'] = id
   row['type'] = type

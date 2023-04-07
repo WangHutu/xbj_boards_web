@@ -64,7 +64,7 @@
         :default-sort="{ prop: 'time', order: 'ascending' }"
       >
         <el-table-column fixed prop="time" sortable label="Time" width="180" />
-        <el-table-column prop="user" label="User" width="90" />
+        <el-table-column prop="opearUser" label="Operators" width="100" />
         <el-table-column prop="operate" label="Operate" min-width="120">
           <template #default="scope">
             <span :class="scope.row.operate === 'del' ? 'delClass' : ''">
