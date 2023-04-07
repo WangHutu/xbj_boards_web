@@ -48,13 +48,6 @@
           @click="operaHandle(scope.row, 1)"
           >Occupy</el-link
         >
-        <el-link
-          v-if="ipList.includes(scope.row.ip)"
-          type="primary"
-          :underline="false"
-          @click="restartBoard(scope.row.ip)"
-          >PowerCycle</el-link
-        >
         <el-link v-if="stateBtn" type="primary" :underline="false" @click="editHandle(scope.row)"
           >Edit</el-link
         >
@@ -65,6 +58,14 @@
           :disabled="scope.row.status !== 'vacant'"
           @click="delRow(scope.row)"
           >Del</el-link
+        >
+        <el-divider />
+        <el-link
+          v-if="ipList.includes(scope.row.ip)"
+          type="primary"
+          :underline="false"
+          @click="restartBoard(scope.row.ip)"
+          >PowerCycle</el-link
         >
       </template>
     </el-table-column>
