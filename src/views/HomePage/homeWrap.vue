@@ -107,7 +107,7 @@ import loginDialog from '@/components/loginDialog.vue'
 import { LocalVue } from '@/common/utils'
 import { useCounterStore } from '@/stores/counter'
 import { ElMessage } from 'element-plus'
-import type { TabsPaneContext } from 'element-plus'
+// import type { TabsPaneContext } from 'element-plus'
 
 interface Homeform {
   type: Array<string>
@@ -118,10 +118,10 @@ interface TypeObject {
   remark: string
   typeName: string
 }
-const activeName = ref('first')
-const handleClick = (tab: TabsPaneContext, event: Event) => {
-  console.log(tab, event)
-}
+// const activeName = ref('first')
+// const handleClick = (tab: TabsPaneContext, event: Event) => {
+//   console.log(tab, event)
+// }
 const reload: any = inject('reload')
 const loginUser = ref<string | undefined>(LocalVue.getLocal('user')?.split('"').join(''))
 const adminUser = ref<string | undefined>(LocalVue.getLocal('adminUser')?.split('"').join(''))

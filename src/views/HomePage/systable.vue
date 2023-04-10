@@ -68,7 +68,7 @@
           >PowerCycle</el-link
         >
         <el-link
-          v-if="LocalVue.getLocal('adminUser') == 'runfengw'"
+          v-if="showI == 'runfengw'"
           type="primary"
           :underline="false"
           @click="showImageDialog(scope.row.ip)"
@@ -133,6 +133,7 @@ const imageForm = reactive<Dialogform>({
   image: '',
   ip: ''
 })
+const showI = LocalVue.getLocal('adminUser')?.split('"').join('')
 const imageFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
   image: [{ required: true, message: 'Please input user', trigger: 'blur' }]
