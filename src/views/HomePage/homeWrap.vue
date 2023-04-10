@@ -59,7 +59,18 @@
           <span>In use</span>
         </div>
       </div>
-      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+      <systable
+            v-model:tableData="tableData"
+            v-model:loading="loading"
+            v-model:stateBtn="stateBtn"
+            v-model:dailys="dailys"
+            v-model:ipList="ipList"
+            v-model:powerList="powerList"
+            @showDialog="showDialog"
+            @getBoardsList="getBoardsList"
+          ></systable
+        >
+      <!-- <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
         <el-tab-pane label="first" name="first"
           ><systable
             v-model:tableData="tableData"
@@ -73,7 +84,7 @@
           ></systable
         ></el-tab-pane>
         <el-tab-pane label="daliy" name="second">daliy</el-tab-pane>
-      </el-tabs>
+      </el-tabs> -->
 
       <sysdialog
         @getBoardsList="getBoardsList"

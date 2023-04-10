@@ -71,7 +71,7 @@
           v-if="powerList[scope.row.ip]?.serial"
           type="primary"
           :underline="false"
-          @click="flashImage(scope.row.ip)"
+          @click="showImageDialog(scope.row.ip)"
           >FlashImage</el-link
         >
       </template>
@@ -84,26 +84,37 @@
     title="Please enter an administrator account to maintain system information."
     width="600px"
   >
-    <template #title >
-      <span >Please enter an administrator account to maintain system information.</span>
+    <template #title>
+      <span>Please enter an administrator account to maintain system information.</span>
     </template>
-    <el-form :model="imageForm" ref="ruleFormRef" :rules="rules" label-width="60px" @submit.prevent>
-      <el-form-item label="image" prop="image">
-        <el-input v-model="imageForm.image" autocomplete="off" @keyup.enter="accHandle(ruleFormRef)"/>
+    <el-form
+      :model="imageForm"
+      ref="imageFormRef"
+      :rules="rules"
+      label-width="100px"
+      @submit.prevent
+    >
+      <el-form-item label="image path" prop="image">
+        <el-input
+          v-model="imageForm.image"
+          autocomplete="off"
+          @keyup.enter="flashImage(imageFormRef)"
+        />
       </el-form-item>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="onCloseHandle(ruleFormRef)">Cancel</el-button>
-        <el-button type="primary" @click="accHandle(ruleFormRef)"> Confirm </el-button>
+        <el-button @click="onCloseHandle(imageFormRef)">Cancel</el-button>
+        <el-button type="primary" @click="flashImage(imageFormRef)"> Confirm </el-button>
       </span>
     </template>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { reactive, h } from 'vue'
+import { reactive, h, ref } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import { Boards, Power } from '@/api/api'
 import { LocalVue } from '@/common/utils'
 defineProps<{
@@ -114,10 +125,23 @@ defineProps<{
   ipList: Array<string>
   powerList: Object
 }>()
+interface Dialogform {
+  image: string
+  ip: string
+}
+const imageForm = reactive<Dialogform>({
+  image: '',
+  ip: ''
+})
+const imageFormRef = ref<FormInstance>()
+const rules = reactive<FormRules>({
+  image: [{ required: true, message: 'Please input user', trigger: 'blur' }]
+})
 const emit = defineEmits(['showDialog', 'getBoardsList'])
 const editHandle = (row: any) => {
   emit('showDialog', row)
 }
+const imageDirState = ref(false)
 const row = reactive({
   id: '',
   type: '',
@@ -283,16 +307,24 @@ const restartBoard = (ip: any) => {
     }
   })
 }
-
-const flashImage = (ip: any) => {
-  Power.restartBoard({ ip }).then((res: any) => {
-    if (res.code == '200') {
-      if (res.data) {
-        const str = res.data.powerList.split('Reboot')[1]
-        ElMessage({
-          message: h('p', null, [h('span', null, str)])
-        })
-      }
+const showImageDialog = (ip: any) => {
+  imageForm['ip'] = ip
+  imageDirState.value = true
+}
+const onCloseHandle = (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  formEl.resetFields()
+  imageForm['image'] = ''
+  imageForm['ip'] = ''
+  imageDirState.value = false
+}
+const flashImage = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return
+  await formEl.validate(async (valid, fields) => {
+    if (valid) {
+      console.log(imageForm)
+    } else {
+      console.log('error submit!', fields)
     }
   })
 }
