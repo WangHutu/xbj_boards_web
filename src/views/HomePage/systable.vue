@@ -68,7 +68,7 @@
           >PowerCycle</el-link
         >
         <el-link
-          v-if="showI == 'runfengw'"
+          v-if="showI == 'runfengw' && showSerial(scope.row.ip)"
           type="primary"
           :underline="false"
           @click="showImageDialog(scope.row.ip)"
@@ -115,15 +115,15 @@
 import { reactive, h, ref } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
-import { Boards, Power } from '@/api/api'
+import { Boards, Power, reImage } from '@/api/api'
 import { LocalVue } from '@/common/utils'
-defineProps<{
+const props = defineProps<{
   tableData: Array<object>
   loading: Boolean
   stateBtn: Boolean
   dailys: Array<string>
   ipList: Array<string>
-  powerList: Object
+  powerList: any
 }>()
 interface Dialogform {
   image: string
@@ -134,6 +134,9 @@ const imageForm = reactive<Dialogform>({
   ip: ''
 })
 const showI = LocalVue.getLocal('adminUser')?.split('"').join('')
+const showSerial = (ip: any) => {
+  return props.powerList[ip] ? !!props.powerList[ip]['serial'] : false
+}
 const imageFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
   image: [{ required: true, message: 'Please input user', trigger: 'blur' }]
@@ -324,6 +327,21 @@ const flashImage = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       console.log(imageForm)
+      reImage
+        .restartImage(imageForm)
+        .then((res: any) => {
+          if (res.code == '200') {
+            if (res.data) {
+              const str = res.data.restartImage
+              ElMessage({
+                message: h('p', null, [h('span', null, str)])
+              })
+            }
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     } else {
       console.log('error submit!', fields)
     }

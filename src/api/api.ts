@@ -123,3 +123,16 @@ export class Power {
     return request('/restartBoard', params, 'post')
   }
 }
+
+
+export class reImage {
+  /**
+   * @description 获取地列表
+   * @return {HttpResponse} result
+   */
+
+  // reImage
+  static async restartImage(params: any) {
+    return request('/restartImage', params, 'post')
+  }
+}
