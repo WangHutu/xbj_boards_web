@@ -69,7 +69,8 @@ axios.interceptors.response.use(
 )
 
 // 封装 GET POST 请求并导出
-export function request(url = '', params = {}, type = 'POST') {
+export function request(url = '', params = {}, type = 'POST', timeout=60000) {
+  axios.defaults.timeout = timeout
   //设置 url params type 的默认值
   return new Promise((resolve, reject) => {
     if (type.toUpperCase() === 'GET') {

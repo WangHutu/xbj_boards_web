@@ -81,11 +81,11 @@
     :close-on-click-modal="false"
     :show-close="false"
     :model-value="imageDirState"
-    title="Please enter an administrator account to maintain system information."
+    title="Please enter the path to image."
     width="600px"
   >
     <template #title>
-      <span>Please enter an administrator account to maintain system information.</span>
+      <span>Please enter the path to image.</span>
     </template>
     <el-form
       :model="imageForm"
@@ -139,7 +139,7 @@ const showSerial = (ip: any) => {
 }
 const imageFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
-  image: [{ required: true, message: 'Please input user', trigger: 'blur' }]
+  image: [{ required: true, message: 'Please enter the path to image', trigger: 'blur' }]
 })
 const emit = defineEmits(['showDialog', 'getBoardsList'])
 const editHandle = (row: any) => {
@@ -332,16 +332,18 @@ const flashImage = async (formEl: FormInstance | undefined) => {
         .then((res: any) => {
           if (res.code == '200') {
             if (res.data) {
-              const str = res.data.restartImage
-              ElMessage({
-                message: h('p', null, [h('span', null, str)])
-              })
+              // const str = res.data.restartImage
+              // ElMessage({
+              //   message: h('p', null, [h('span', null, str)])
+              // })
             }
           }
         })
         .catch((err) => {
           console.log(err)
         })
+        ElMessage('start......')
+        onCloseHandle(formEl)
     } else {
       console.log('error submit!', fields)
     }
