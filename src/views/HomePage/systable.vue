@@ -68,7 +68,7 @@
           >PowerCycle</el-link
         >
         <el-link
-          v-if="powerList[scope.row.ip]?.serial"
+          v-if="powerList?[scope.row.ip]?['serial'] && LocalVue.getLocal('adminUser') == 'runfengw'"
           type="primary"
           :underline="false"
           @click="showImageDialog(scope.row.ip)"
