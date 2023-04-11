@@ -60,16 +60,15 @@
         </div>
       </div>
       <systable
-            v-model:tableData="tableData"
-            v-model:loading="loading"
-            v-model:stateBtn="stateBtn"
-            v-model:dailys="dailys"
-            v-model:ipList="ipList"
-            v-model:powerList="powerList"
-            @showDialog="showDialog"
-            @getBoardsList="getBoardsList"
-          ></systable
-        >
+        v-model:tableData="tableData"
+        v-model:loading="loading"
+        v-model:stateBtn="stateBtn"
+        v-model:dailys="dailys"
+        v-model:ipList="ipList"
+        v-model:powerList="powerList"
+        @showDialog="showDialog"
+        @getBoardsList="getBoardsList"
+      ></systable>
       <!-- <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
         <el-tab-pane label="first" name="first"
           ><systable
@@ -133,7 +132,7 @@ const selectType = ref([])
 const selectStatus = ref([])
 const searchIp = ref<string>('')
 const dialogFormVisible = ref(false)
-const tableData = ref([])
+const tableData = ref<Array<string>>([])
 const types = ref<Array<TypeObject>>([])
 const powerList = ref<Object>([])
 const ipList = ref<Array<string>>([])
@@ -219,7 +218,7 @@ const getBoardsList = (data: any) => {
     .then((res: any) => {
       if (res.code == '200') {
         if (res.data) {
-          tableData.value = dataFilter(res.data.boardInfo)
+          tableData.value = dataFilter2(res.data.boardInfo)
           if (res.data.user) {
             LocalVue.setLocal('terminal_user', res.data.user)
           } else {
@@ -249,6 +248,37 @@ const dataFilter = (data: any) => {
     return indexA - indexB
   })
   return sortedData
+}
+
+const dataFilter2 = (data: any) => {
+  const order = ['vek280', 'vck190', 'kv260', 'zcu102', 'zcu104']
+  // const sortedData = data.slice().sort((a: any, b: any) => {
+  //   const indexA = order.indexOf(a.type)
+  //   const indexB = order.indexOf(b.type)
+  //   return indexA - indexB
+  // })
+  let targetArr: any[] = []
+  order.forEach((typeItem: any) => {
+    const arr: any[] = []
+    data.forEach((item: any) => {
+      if (item.type == typeItem) {
+        arr.push(item)
+      }
+    })
+    const newArr = arr.sort((a, b) => {
+      const ip1 = a.ip
+        .split('.')
+        .map((e:any) => e.padStart(3, '0'))
+        .join('')
+      const ip2 = b.ip
+        .split('.')
+        .map((e:any) => e.padStart(3, '0'))
+        .join('')
+      return ip1 - ip2
+    })
+    targetArr = targetArr.concat(newArr)
+  })
+  return targetArr
 }
 
 onMounted(async () => {
