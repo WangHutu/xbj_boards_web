@@ -240,23 +240,18 @@ const getBoardsList = (data: any) => {
     })
 }
 
-const dataFilter = (data: any) => {
-  const order = ['vek280', 'vck190', 'kv260', 'zcu102', 'zcu104']
-  const sortedData = data.slice().sort((a: any, b: any) => {
-    const indexA = order.indexOf(a.type)
-    const indexB = order.indexOf(b.type)
-    return indexA - indexB
-  })
-  return sortedData
-}
+// const dataFilter = (data: any) => {
+//   const order = ['vek280', 'vck190', 'kv260', 'zcu102', 'zcu104']
+//   const sortedData = data.slice().sort((a: any, b: any) => {
+//     const indexA = order.indexOf(a.type)
+//     const indexB = order.indexOf(b.type)
+//     return indexA - indexB
+//   })
+//   return sortedData
+// }
 
 const dataFilter2 = (data: any) => {
   const order = ['vek280', 'vck190', 'kv260', 'zcu102', 'zcu104']
-  // const sortedData = data.slice().sort((a: any, b: any) => {
-  //   const indexA = order.indexOf(a.type)
-  //   const indexB = order.indexOf(b.type)
-  //   return indexA - indexB
-  // })
   let targetArr: any[] = []
   order.forEach((typeItem: any) => {
     const arr: any[] = []
