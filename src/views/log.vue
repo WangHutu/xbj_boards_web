@@ -35,7 +35,7 @@
                 :value="item.value"
               /> </el-select
           ></el-col>
-          <el-col :span="5" style="padding-right: 10px"
+          <el-col :span="4" style="padding-right: 10px"
             ><el-input
               :suffix-icon="Search"
               :model-value="searchIp"
@@ -44,7 +44,7 @@
               @input="change('ip', $event)"
               @keyup.enter="searchhandle"
           /></el-col>
-          <el-col :span="5" style="padding-right: 10px"
+          <el-col :span="4" style="padding-right: 10px"
             ><el-input
               :suffix-icon="Search"
               :model-value="searchUser"
@@ -53,6 +53,9 @@
               @input="change('user', $event)"
               @keyup.enter="searchhandle"
           /></el-col>
+          <el-col :span="2" style="text-align: right">
+            <el-button v-if="stateBtn" type="primary" @click="clearList()">Clear</el-button>
+          </el-col>
         </el-row>
       </div>
       <el-table
@@ -143,6 +146,7 @@ import { ref, onMounted } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { Boards } from '@/api/api'
 import { LocalVue } from '@/common/utils'
+import { useCounterStore } from '@/stores/counter'
 
 interface Homeform {
   type: Array<string>
@@ -162,12 +166,16 @@ const searchUser = ref<string>('')
 
 const tableData = ref([])
 const types = ref<Array<TypeObject>>([])
+const store = useCounterStore()
+const stateBtn = ref(false)
 const operateList = [
   { value: 'add', label: 'add' },
   { value: 'update', label: 'update' },
   { value: 'del', label: 'del' },
   { value: 'occupancy', label: 'occupancy' },
-  { value: 'release', label: 'release' }
+  { value: 'release', label: 'release' },
+  { value: 'powerCycle', label: 'powerCycle' },
+  { value: 'flashImage', label: 'flashImage' }
 ]
 const searchForm = ref<Homeform>({
   type: [],
@@ -215,6 +223,14 @@ const getTypeList = (data: any) => {
   })
 }
 
+const clearList = () => {
+  Boards.clearList({}).then((res: any) => {
+    if (res.code == '200') {
+      getLogList('')
+    }
+  })
+}
+
 const getLogList = (data: any) => {
   loading.value = true
   Boards.getLogList(data)
@@ -226,6 +242,8 @@ const getLogList = (data: any) => {
             LocalVue.setLocal('user', res.data.user)
           }
         }
+        const name = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
+        stateBtn.value = store.adminUser.includes(name)
       }
       setTimeout(() => {
         loading.value = false

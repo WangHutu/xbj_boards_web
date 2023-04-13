@@ -77,6 +77,11 @@ export class Boards {
   static async getLogList(params: any) {
     return request('/getLogList', params, 'get')
   }
+
+  // 清除日志列表
+  static async clearList(params: any) {
+    return request('/clearList', params, 'post')
+  }
 }
 
 

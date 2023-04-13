@@ -59,19 +59,19 @@
           @click="delRow(scope.row)"
           >Del</el-link
         >
-        <el-divider />
+        <el-divider v-if="ipList.includes(scope.row.ip) || (showI == 'runfengw' && showSerial(scope.row.ip))"  />
         <el-link
           v-if="ipList.includes(scope.row.ip)"
           type="primary"
           :underline="false"
-          @click="restartBoard(scope.row.ip)"
+          @click="restartBoard(scope.row)"
           >PowerCycle</el-link
         >
         <el-link
           v-if="showI == 'runfengw' && showSerial(scope.row.ip)"
           type="primary"
           :underline="false"
-          @click="showImageDialog(scope.row.ip)"
+          @click="showImageDialog(scope.row)"
           >FlashImage</el-link
         >
       </template>
@@ -128,10 +128,12 @@ const props = defineProps<{
 interface Dialogform {
   image: string
   ip: string
+  id: string
 }
 const imageForm = reactive<Dialogform>({
   image: '',
-  ip: ''
+  ip: '',
+  id: ''
 })
 const showI = LocalVue.getLocal('adminUser')?.split('"').join('')
 const showSerial = (ip: any) => {
@@ -299,8 +301,8 @@ const diffTime = (time: any) => {
   return diffStr
 }
 
-const restartBoard = (ip: any) => {
-  Power.restartBoard({ ip }).then((res: any) => {
+const restartBoard = (row: any) => {
+  Power.restartBoard(row).then((res: any) => {
     if (res.code == '200') {
       if (res.data) {
         const str = res.data.powerList.split('Reboot')[1]
@@ -311,8 +313,9 @@ const restartBoard = (ip: any) => {
     }
   })
 }
-const showImageDialog = (ip: any) => {
-  imageForm['ip'] = ip
+const showImageDialog = (row: any) => {
+  imageForm['ip'] = row.ip
+  imageForm['id'] = row.id
   imageDirState.value = true
 }
 const onCloseHandle = (formEl: FormInstance | undefined) => {
@@ -320,13 +323,13 @@ const onCloseHandle = (formEl: FormInstance | undefined) => {
   formEl.resetFields()
   imageForm['image'] = ''
   imageForm['ip'] = ''
+  imageForm['id'] = ''
   imageDirState.value = false
 }
 const flashImage = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate(async (valid, fields) => {
     if (valid) {
-      console.log(imageForm)
       reImage
         .restartImage(imageForm)
         .then((res: any) => {
