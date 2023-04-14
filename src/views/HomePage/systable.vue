@@ -59,7 +59,9 @@
           @click="delRow(scope.row)"
           >Del</el-link
         >
-        <el-divider v-if="ipList.includes(scope.row.ip) || (showI == 'runfengw' && showSerial(scope.row.ip))"  />
+        <el-divider
+          v-if="ipList.includes(scope.row.ip) || (showI == 'runfengw' && showSerial(scope.row.ip))"
+        />
         <el-link
           v-if="ipList.includes(scope.row.ip)"
           type="primary"
@@ -129,11 +131,13 @@ interface Dialogform {
   image: string
   ip: string
   id: string
+  opearUser: string
 }
 const imageForm = reactive<Dialogform>({
-  image: '',
+  image: '/group/xbjlab/dphi_edge/workspace/vek280_2023.1.img',
   ip: '',
-  id: ''
+  id: '',
+  opearUser: ''
 })
 const showI = LocalVue.getLocal('adminUser')?.split('"').join('')
 const showSerial = (ip: any) => {
@@ -301,7 +305,19 @@ const diffTime = (time: any) => {
   return diffStr
 }
 
-const restartBoard = (row: any) => {
+const restartBoard = (data: any) => {
+  const { type, ip, remark, id, number, status, image, user } = data
+  row['id'] = id
+  row['type'] = type
+  row['ip'] = ip
+  row['number'] = number
+  row['image'] = image
+  row['status'] = status
+  row['remark'] = remark
+  row['user'] = user
+  row['opearUser'] = LocalVue.getLocal('adminUser')?.split('"').join('') ||
+    LocalVue.getLocal('user')?.split('"').join('') ||
+    ''
   Power.restartBoard(row).then((res: any) => {
     if (res.code == '200') {
       if (res.data) {
@@ -316,6 +332,9 @@ const restartBoard = (row: any) => {
 const showImageDialog = (row: any) => {
   imageForm['ip'] = row.ip
   imageForm['id'] = row.id
+  imageForm['opearUser'] = LocalVue.getLocal('adminUser')?.split('"').join('') ||
+    LocalVue.getLocal('user')?.split('"').join('') ||
+    ''
   imageDirState.value = true
 }
 const onCloseHandle = (formEl: FormInstance | undefined) => {
@@ -345,8 +364,8 @@ const flashImage = async (formEl: FormInstance | undefined) => {
         .catch((err) => {
           console.log(err)
         })
-        ElMessage('start......')
-        onCloseHandle(formEl)
+      ElMessage('start......')
+      onCloseHandle(formEl)
     } else {
       console.log('error submit!', fields)
     }
