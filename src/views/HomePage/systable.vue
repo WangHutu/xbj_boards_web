@@ -354,17 +354,14 @@ const flashImage = async (formEl: FormInstance | undefined) => {
         .then((res: any) => {
           if (res.code == '200') {
             if (res.data) {
-              // const str = res.data.restartImage
-              // ElMessage({
-              //   message: h('p', null, [h('span', null, str)])
-              // })
+              const str = res.data.restartImage
+              ElMessage(str)
             }
           }
         })
         .catch((err) => {
           console.log(err)
         })
-      ElMessage('start......')
       onCloseHandle(formEl)
     } else {
       console.log('error submit!', fields)
