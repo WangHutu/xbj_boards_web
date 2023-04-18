@@ -98,7 +98,7 @@
     >
       <el-form-item label="image path" prop="image">
         <el-input
-          v-model="imageForm.image"
+          v-model.trim="imageForm.image"
           autocomplete="off"
           @keyup.enter="flashImage(imageFormRef)"
         />
@@ -347,6 +347,7 @@ const onCloseHandle = (formEl: FormInstance | undefined) => {
 }
 const flashImage = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
+  console.log(imageForm)
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       reImage

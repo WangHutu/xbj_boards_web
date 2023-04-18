@@ -18,7 +18,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="Ip: " prop="ip">
-        <el-input v-model="formData.ip" autocomplete="off" placeholder="Please input" />
+        <el-input v-model.trim="formData.ip" autocomplete="off" placeholder="Please input" />
       </el-form-item>
       <el-form-item label="Hardware Rev: " prop="number">
         <el-input v-model="formData.number" autocomplete="off" placeholder="Please input" />
