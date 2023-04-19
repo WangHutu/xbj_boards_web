@@ -17,6 +17,9 @@
             :class="scope.row.status === 'vacant' ? 'idle' : 'inuse'"
           ></span>
         </el-tooltip>
+        <el-link type="primary" :underline="false" @click="ping_ip(scope.row)"
+          ><el-icon><Refresh /></el-icon
+        ></el-link>
       </template>
     </el-table-column>
     <el-table-column prop="user" label="User" width="175px">
@@ -315,7 +318,8 @@ const restartBoard = (data: any) => {
   row['status'] = status
   row['remark'] = remark
   row['user'] = user
-  row['opearUser'] = LocalVue.getLocal('adminUser')?.split('"').join('') ||
+  row['opearUser'] =
+    LocalVue.getLocal('adminUser')?.split('"').join('') ||
     LocalVue.getLocal('user')?.split('"').join('') ||
     ''
   Power.restartBoard(row).then((res: any) => {
@@ -329,10 +333,14 @@ const restartBoard = (data: any) => {
     }
   })
 }
+const ping_ip = (row: any) => {
+  
+}
 const showImageDialog = (row: any) => {
   imageForm['ip'] = row.ip
   imageForm['id'] = row.id
-  imageForm['opearUser'] = LocalVue.getLocal('adminUser')?.split('"').join('') ||
+  imageForm['opearUser'] =
+    LocalVue.getLocal('adminUser')?.split('"').join('') ||
     LocalVue.getLocal('user')?.split('"').join('') ||
     ''
   imageDirState.value = true
