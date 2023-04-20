@@ -138,7 +138,7 @@ interface Dialogform {
   opearUser: string
 }
 const imageForm = reactive<Dialogform>({
-  image: '/group/xbjlab/dphi_edge/workspace/vek280_2023.1.img',
+  image: '/group/xbjlab/dphi_edge/workspace/vek280_2022.2.img',
   ip: '',
   id: '',
   opearUser: ''
@@ -336,10 +336,26 @@ const restartBoard = (data: any) => {
 }
 const ping_ip = (row: any) => {
   console.log(row.ip)
-  Power.ping_ip({ip : row.ip}).then((res: any) => {
+  ElMessage({
+    type: 'warning',
+    showClose: true,
+    offset: 180,
+    duration: 12000,
+    message: 'Ping....'
+  })
+  Power.ping_ip({ ip: row.ip }).then((res: any) => {
     if (res.code == '200') {
       if (res.data) {
         console.log(res.data)
+        let str = ''
+        if (res.data.success) {
+          str = res.data.success.split('\n').join('<br />')
+        } else {
+          str = res.data.error.split('\n').join('<br />')
+        }
+        ElMessageBox.alert(`${str}`, {
+          dangerouslyUseHTMLString: true
+        })
       }
     }
   })
@@ -372,7 +388,12 @@ const flashImage = async (formEl: FormInstance | undefined) => {
           if (res.code == '200') {
             if (res.data) {
               const str = res.data.restartImage
-              ElMessage(str)
+              ElMessage({
+                showClose: true,
+                offset: 180,
+                duration: 12000,
+                message: 'flashing....'
+              })
             }
           }
         })
