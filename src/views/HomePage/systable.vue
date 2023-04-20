@@ -2,7 +2,7 @@
   <el-table v-loading="loading" :data="tableData" stripe border style="width: 100%">
     <el-table-column fixed prop="type" label="Type" width="90" />
     <el-table-column fixed prop="ip" label="Ip" min-width="150" />
-    <el-table-column prop="number" label="Hardware Rev" min-width="150" />
+    <el-table-column prop="number" label="Hardware Rev" min-width="110" />
     <el-table-column prop="image" label="Image" min-width="120" />
     <el-table-column prop="status" label="State" width="80px" align="center">
       <template #default="scope">
@@ -17,9 +17,6 @@
             :class="scope.row.status === 'vacant' ? 'idle' : 'inuse'"
           ></span>
         </el-tooltip>
-        <el-link type="primary" :underline="false" @click="ping_ip(scope.row)"
-          ><el-icon><Refresh /></el-icon
-        ></el-link>
       </template>
     </el-table-column>
     <el-table-column prop="user" label="User" width="175px">
@@ -34,7 +31,7 @@
       </template>
     </el-table-column>
     <el-table-column prop="remark" label="Remark" min-width="180" />
-    <el-table-column label="operate" fixed="right" width="180px" align="center">
+    <el-table-column label="operate" fixed="right" width="185px" align="center">
       <template #default="scope">
         <el-link
           v-if="scope.row.status !== 'vacant'"
@@ -61,6 +58,13 @@
           :disabled="scope.row.status !== 'vacant'"
           @click="delRow(scope.row)"
           >Del</el-link
+        >
+        <el-link
+          v-if="showI == 'runfengw'"
+          type="primary"
+          :underline="false"
+          @click="ping_ip(scope.row)"
+          >Ping</el-link
         >
         <el-divider
           v-if="ipList.includes(scope.row.ip) || (showI == 'runfengw' && showSerial(scope.row.ip))"
@@ -89,9 +93,6 @@
     title="Please enter the path to image."
     width="600px"
   >
-    <template #title>
-      <span>Please enter the path to image.</span>
-    </template>
     <el-form
       :model="imageForm"
       ref="imageFormRef"
@@ -334,7 +335,14 @@ const restartBoard = (data: any) => {
   })
 }
 const ping_ip = (row: any) => {
-  
+  console.log(row.ip)
+  Power.ping_ip({ip : row.ip}).then((res: any) => {
+    if (res.code == '200') {
+      if (res.data) {
+        console.log(res.data)
+      }
+    }
+  })
 }
 const showImageDialog = (row: any) => {
   imageForm['ip'] = row.ip

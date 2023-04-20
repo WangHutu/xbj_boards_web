@@ -127,6 +127,11 @@ export class Power {
   static async restartBoard(params: any) {
     return request('/restartBoard', params, 'post')
   }
+
+  // ping ip
+  static async ping_ip(params: any) {
+    return request('/pingIp', params, 'post', 100000)
+  }
 }
 
 
