@@ -4,7 +4,7 @@
     <el-table-column fixed prop="ip" label="Ip" min-width="150" />
     <el-table-column prop="number" label="Hardware Rev" min-width="110" />
     <el-table-column prop="image" label="Image" min-width="120" />
-    <el-table-column prop="status" label="State" width="80px" align="center">
+    <el-table-column prop="status" label="State" width="120px" align="center">
       <template #default="scope">
         <el-tooltip
           class="box-item"
@@ -17,6 +17,7 @@
             :class="scope.row.status === 'vacant' ? 'idle' : 'inuse'"
           ></span>
         </el-tooltip>
+        <p class="pingStateText" v-if="scope.row.pingState && scope.row.pingState=='fail'">lose connection</p>
       </template>
     </el-table-column>
     <el-table-column prop="user" label="User" width="175px">
@@ -59,13 +60,14 @@
           @click="delRow(scope.row)"
           >Del</el-link
         >
-        <el-link
+        <!-- 前端不做ping 暂时搁置 -->
+        <!-- <el-link
           v-if="showI == 'runfengw'"
           type="primary"
           :underline="false"
           @click="ping_ip(scope.row)"
           >Ping</el-link
-        >
+        > -->
         <el-divider
           v-if="ipList.includes(scope.row.ip) || (showI == 'runfengw' && showSerial(scope.row.ip))"
         />
@@ -167,40 +169,7 @@ const row = reactive({
   user: '',
   opearUser: ''
 })
-// const loginDialogRef = ref<InstanceType<typeof loginDialog>>()
-// const occhandle = (data: any) => {
-//   const adminUser = LocalVue.getLocal('adminUser')?.split('"').join('') || ''
-//   const loginUser = LocalVue.getLocal('user')?.split('"').join('') || ''
-//   const { type, ip, remark, id, number, image } = data
-//   row['id'] = id
-//   row['type'] = type
-//   row['ip'] = ip
-//   row['number'] = number
-//   row['image'] = image
-//   row['remark'] = remark
-//   row['status'] = 'occupy'
-//   row['user'] = adminUser
-//   if (adminUser) {
-//     ElMessageBox.confirm(
-//       `Hi ${adminUser}, Are you sure you want to occupy the ${row['type']} with IP address 【 ${row['ip']} 】?`,
-//       'Occupy',
-//       {
-//         confirmButtonText: 'OK',
-//         cancelButtonText: 'Cancel',
-//         type: 'info'
-//       }
-//     ).then(() => {
-//       Boards.occBoard(row).then((res: any) => {
-//         console.log(res, 'res')
-//         if (res.code == 200) {
-//           reloadBoardsList()
-//         }
-//       })
-//     })
-//   } else {
-//     loginDialogRef.value?.loginInit()
-//   }
-// }
+
 const reloadBoardsList = () => {
   emit('getBoardsList', '')
 }
@@ -334,32 +303,34 @@ const restartBoard = (data: any) => {
     }
   })
 }
-const ping_ip = (row: any) => {
-  console.log(row.ip)
-  ElMessage({
-    type: 'warning',
-    showClose: true,
-    offset: 180,
-    duration: 12000,
-    message: 'Ping....'
-  })
-  Power.ping_ip({ ip: row.ip }).then((res: any) => {
-    if (res.code == '200') {
-      if (res.data) {
-        console.log(res.data)
-        let str = ''
-        if (res.data.success) {
-          str = res.data.success.split('\n').join('<br />')
-        } else {
-          str = res.data.error.split('\n').join('<br />')
-        }
-        ElMessageBox.alert(`${str}`, {
-          dangerouslyUseHTMLString: true
-        })
-      }
-    }
-  })
-}
+
+// 前端不做 ping 暂时搁置
+// const ping_ip = (row: any) => {
+//   console.log(row.ip)
+//   ElMessage({
+//     type: 'warning',
+//     showClose: true,
+//     offset: 180,
+//     duration: 12000,
+//     message: 'Ping....'
+//   })
+//   Power.ping_ip({ ip: row.ip }).then((res: any) => {
+//     if (res.code == '200') {
+//       if (res.data) {
+//         console.log(res.data)
+//         let str = ''
+//         if (res.data.success) {
+//           str = res.data.success.split('\n').join('<br />')
+//         } else {
+//           str = res.data.error.split('\n').join('<br />')
+//         }
+//         ElMessageBox.alert(`${str}`, {
+//           dangerouslyUseHTMLString: true
+//         })
+//       }
+//     }
+//   })
+// }
 const showImageDialog = (row: any) => {
   imageForm['ip'] = row.ip
   imageForm['id'] = row.id
@@ -387,7 +358,7 @@ const flashImage = async (formEl: FormInstance | undefined) => {
         .then((res: any) => {
           if (res.code == '200') {
             if (res.data) {
-              const str = res.data.restartImage
+              // const str = res.data.restartImage
               ElMessage({
                 showClose: true,
                 offset: 180,
@@ -423,6 +394,10 @@ a {
 }
 .idle {
   background: #67c23a;
+}
+.pingStateText {
+  font-size: 12px;
+  color: #f56c6c;
 }
 ::v-deep .el-divider {
   margin: 10px 0;

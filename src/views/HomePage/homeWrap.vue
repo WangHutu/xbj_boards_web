@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, inject } from 'vue'
+import { ref, reactive, onMounted, inject } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { Boards, Admin, Power } from '@/api/api'
 import systable from './systable.vue'
@@ -136,6 +136,7 @@ const tableData = ref<Array<object>>([])
 const types = ref<Array<TypeObject>>([])
 const powerList = ref<Object>([])
 const ipList = ref<Array<string>>([])
+let pingList = reactive<any>({})
 const status = [
   { value: 'vacant', label: 'Idle' },
   { value: 'occupy', label: 'Inuse' }
@@ -173,6 +174,16 @@ const change = (val: String, event: any) => {
     }
     timer = setTimeout(searchhandle, 300)
   }
+}
+const getPingResult = () => {
+  Power.ping_ip({ ip: '' }).then((res: any) => {
+    if (res.code == '200') {
+      if (res.data) {
+        console.log(res.data)
+        pingList = res.data
+      }
+    }
+  })
 }
 const getPowerList = (data: any) => {
   Power.getPowerList(data).then((res: any) => {
@@ -218,7 +229,11 @@ const getBoardsList = (data: any) => {
     .then((res: any) => {
       if (res.code == '200') {
         if (res.data) {
-          tableData.value = dataFilter2(res.data.boardInfo)
+          const obj = res.data.boardInfo.map((item:any)=>{
+            item['pingState'] = pingList[item?.ip]
+            return item
+          })
+          tableData.value = dataFilter2(obj)
           if (res.data.user) {
             LocalVue.setLocal('terminal_user', res.data.user)
           } else {
@@ -280,6 +295,7 @@ onMounted(async () => {
   // LocalVue.clearLocal()
   await getAdminList('')
   await getPowerList('')
+  await getPingResult()
   getTypeList('')
   getBoardsList('')
 
