@@ -17,7 +17,9 @@
             :class="scope.row.status === 'vacant' ? 'idle' : 'inuse'"
           ></span>
         </el-tooltip>
-        <p class="pingStateText" v-if="scope.row.pingState && scope.row.pingState=='fail'">lose connection</p>
+        <p class="pingStateText" v-if="scope.row.pingState && scope.row.pingState == 'fail'">
+          lose connection
+        </p>
       </template>
     </el-table-column>
     <el-table-column prop="user" label="User" width="175px">
@@ -47,6 +49,7 @@
           :underline="false"
           :disabled="scope.row.status !== 'vacant'"
           @click="operaHandle(scope.row, 1)"
+
           >Occupy</el-link
         >
         <el-link v-if="stateBtn" type="primary" :underline="false" @click="editHandle(scope.row)"
@@ -69,17 +72,18 @@
           >Ping</el-link
         > -->
         <el-divider
-          v-if="ipList.includes(scope.row.ip) || (showI == 'runfengw' && showSerial(scope.row.ip))"
+          v-if="ipList.includes(scope.row.ip) || showSerial(scope.row.ip)"
         />
         <el-link
-          v-if="ipList.includes(scope.row.ip)"
+          v-if="ipList.includes(scope.row.ip) && showPower(scope.row.ip)"
           type="primary"
           :underline="false"
           @click="restartBoard(scope.row)"
           >PowerCycle</el-link
         >
         <el-link
-          v-if="showI == 'runfengw' && showSerial(scope.row.ip)"
+          :disabled="scope.row.status !== 'vacant'"
+          v-if="showSerial(scope.row.ip)"
           type="primary"
           :underline="false"
           @click="showImageDialog(scope.row)"
@@ -140,14 +144,17 @@ interface Dialogform {
   opearUser: string
 }
 const imageForm = reactive<Dialogform>({
-  image: '/group/xbjlab/dphi_edge/workspace/vek280_2022.2.img',
+  image: '',
   ip: '',
   id: '',
   opearUser: ''
 })
-const showI = LocalVue.getLocal('adminUser')?.split('"').join('')
+// const showI = LocalVue.getLocal('adminUser')?.split('"').join('')
 const showSerial = (ip: any) => {
-  return props.powerList[ip] ? !!props.powerList[ip]['serial'] : false
+  return props.powerList[ip] ? !!(props.powerList[ip]['serial']||props.powerList[ip]['jtag']) : false
+}
+const showPower = (ip: any) => {
+  return props.powerList[ip] ? !!props.powerList[ip]['power'] : false
 }
 const imageFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
