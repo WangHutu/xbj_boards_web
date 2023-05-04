@@ -177,7 +177,8 @@ const closeWs = () => {
   // ws.value?.wsInit()
 }
 const openTerminal = () => {
-  window.open('http://117.50.174.56:8888/', '_blank')
+  // window.open('http://117.50.174.56:8888/', '_blank')
+  window.open('http://localhost:9999/', '_blank')
 }
 const imageFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
