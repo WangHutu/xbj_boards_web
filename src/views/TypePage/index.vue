@@ -22,7 +22,7 @@
         <el-table-column prop="typeName" label="Type" min-width="150" />
         <el-table-column prop="remark" label="Remark" min-width="180" />
         <el-table-column v-if="stateBtn" label="operate " width="150px" align="center">
-          <template #default="scope">
+          <template #default="scope:any">
             <el-link type="primary" :underline="false" @click="showDialog(scope.row)">Edit</el-link>
             <el-link type="primary" :underline="false" @click="delRow(scope.row)">Del</el-link>
           </template>

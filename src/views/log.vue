@@ -69,21 +69,21 @@
         <el-table-column fixed prop="time" sortable label="Time" width="180" />
         <el-table-column prop="opearUser" label="Operators" width="100" />
         <el-table-column prop="operate" label="Operate" min-width="120">
-          <template #default="scope">
+          <template #default="scope:any">
             <span :class="scope.row.operate === 'del' ? 'delClass' : ''">
               {{ scope.row.operate }}
             </span>
           </template>
         </el-table-column>
         <el-table-column label="Type" width="120">
-          <template #default="scope">
+          <template #default="scope:any">
             <span v-if="scope.row.newType !== scope.row.type">
               {{ scope.row.type }}
             </span>
           </template>
         </el-table-column>
         <el-table-column prop="newType" label="newType" width="120">
-          <template #default="scope">
+          <template #default="scope:any">
             <span
               :class="
                 scope.row.operate === 'update' && scope.row.newType !== scope.row.type
@@ -96,14 +96,14 @@
           </template>
         </el-table-column>
         <el-table-column label="Ip" min-width="150">
-          <template #default="scope">
+          <template #default="scope:any">
             <span v-if="scope.row.newIp !== scope.row.ip">
               {{ scope.row.ip }}
             </span>
           </template>
         </el-table-column>
         <el-table-column prop="newIp" label="newIp" min-width="150">
-          <template #default="scope">
+          <template #default="scope:any">
             <span
               :class="
                 scope.row.operate === 'update' && scope.row.newIp !== scope.row.ip
@@ -116,14 +116,14 @@
           </template>
         </el-table-column>
         <el-table-column label="Image" min-width="150">
-          <template #default="scope">
+          <template #default="scope:any">
             <span v-if="scope.row.newImage !== scope.row.image">
               {{ scope.row.image }}
             </span>
           </template>
         </el-table-column>
         <el-table-column prop="newImage" label="new Image" min-width="150">
-          <template #default="scope">
+          <template #default="scope:any">
             <span
               :class="
                 scope.row.operate === 'update' && scope.row.newImage !== scope.row.image

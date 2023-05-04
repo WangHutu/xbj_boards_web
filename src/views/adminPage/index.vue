@@ -22,7 +22,7 @@
         <el-table-column prop="admin" label="Admin" min-width="150" />
         <el-table-column prop="remark" label="Remark" min-width="180" />
         <el-table-column v-if="stateBtn" label="operate " width="150px" align="center">
-          <template #default="scope">
+          <template #default="scope:any">
             <el-link v-if="!store.adminUser.includes(scope.row.admin)" type="primary" :underline="false" @click="showDialog(scope.row)">Edit</el-link>
             <el-link v-if="!store.adminUser.includes(scope.row.admin)" type="primary" :underline="false" @click="delRow(scope.row)">Del</el-link>
           </template>

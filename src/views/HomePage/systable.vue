@@ -5,7 +5,7 @@
     <el-table-column prop="number" label="Hardware Rev" min-width="110" />
     <el-table-column prop="image" label="Image" min-width="120" />
     <el-table-column prop="status" label="State" width="120px" align="center">
-      <template #default="scope">
+      <template #default="scope: any">
         <el-tooltip
           class="box-item"
           effect="dark"
@@ -23,7 +23,7 @@
       </template>
     </el-table-column>
     <el-table-column prop="user" label="User" width="175px">
-      <template #default="scope">
+      <template #default="scope: any">
         <span>{{ scope.row.user ? scope.row.user : '-' }}</span>
         <span v-if="!dailys.includes(scope.row.ip) && scope.row.user">
           <br />
@@ -35,7 +35,7 @@
     </el-table-column>
     <el-table-column prop="remark" label="Remark" min-width="180" />
     <el-table-column label="operate" fixed="right" width="185px" align="center">
-      <template #default="scope">
+      <template #default="scope: any">
         <el-link
           v-if="scope.row.status !== 'vacant'"
           type="primary"
@@ -49,7 +49,6 @@
           :underline="false"
           :disabled="scope.row.status !== 'vacant'"
           @click="operaHandle(scope.row, 1)"
-
           >Occupy</el-link
         >
         <el-link v-if="stateBtn" type="primary" :underline="false" @click="editHandle(scope.row)"
@@ -71,9 +70,17 @@
           @click="ping_ip(scope.row)"
           >Ping</el-link
         > -->
-        <el-divider
-          v-if="ipList.includes(scope.row.ip) || showSerial(scope.row.ip)"
-        />
+
+        <!-- @click="showTerminal = true" -->
+        <el-link
+          v-if="showI == 'runfengw'"
+          type="primary"
+          :underline="false"
+          
+          @click="openTerminal()"
+          >openTerminal</el-link
+        >
+        <el-divider v-if="ipList.includes(scope.row.ip) || showSerial(scope.row.ip)" />
         <el-link
           v-if="ipList.includes(scope.row.ip) && showPower(scope.row.ip)"
           type="primary"
@@ -121,6 +128,10 @@
       </span>
     </template>
   </el-dialog>
+  <div v-if="showTerminal">
+    <terminal ref="ws"/>
+    <button @click="closeWs()">close</button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -129,6 +140,7 @@ import { ElMessageBox, ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import { Boards, Power, reImage } from '@/api/api'
 import { LocalVue } from '@/common/utils'
+import terminal from './terminal.vue'
 const props = defineProps<{
   tableData: Array<object>
   loading: Boolean
@@ -149,12 +161,23 @@ const imageForm = reactive<Dialogform>({
   id: '',
   opearUser: ''
 })
-// const showI = LocalVue.getLocal('adminUser')?.split('"').join('')
+const ws = ref<InstanceType<typeof terminal>>()
+const showI = LocalVue.getLocal('adminUser')?.split('"').join('')
+const showTerminal = ref(false)
 const showSerial = (ip: any) => {
-  return props.powerList[ip] ? !!(props.powerList[ip]['serial']||props.powerList[ip]['jtag']) : false
+  return props.powerList[ip]
+    ? !!(props.powerList[ip]['serial'] || props.powerList[ip]['jtag'])
+    : false
 }
 const showPower = (ip: any) => {
   return props.powerList[ip] ? !!props.powerList[ip]['power'] : false
+}
+const closeWs = () => {
+  showTerminal.value = false
+  // ws.value?.wsInit()
+}
+const openTerminal = () => {
+  window.open('http://117.50.174.56:8888/', '_blank')
 }
 const imageFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({

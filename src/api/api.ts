@@ -146,3 +146,16 @@ export class reImage {
     return request('/restartImage', params, 'post')
   }
 }
+
+export class ws {
+  /**
+   * @description 获取地列表
+   * @return {HttpResponse} result
+   */
+
+  // reImage
+  static async wsUrl(params: any) {
+    return request('/start-ttyd', params, 'get')
+  }
+}
+
