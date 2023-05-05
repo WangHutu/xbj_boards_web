@@ -71,13 +71,12 @@
           >Ping</el-link
         > -->
 
-        <!-- @click="showTerminal = true" -->
+        <!-- @click="openTerminal()" -->
         <el-link
           v-if="showI == 'runfengw'"
           type="primary"
           :underline="false"
-          
-          @click="openTerminal()"
+          @click="showTerminal = true"
           >openTerminal</el-link
         >
         <el-divider v-if="ipList.includes(scope.row.ip) || showSerial(scope.row.ip)" />
@@ -129,7 +128,7 @@
     </template>
   </el-dialog>
   <div v-if="showTerminal">
-    <terminal ref="ws"/>
+    <terminal ref="ws" />
     <button @click="closeWs()">close</button>
   </div>
 </template>
@@ -173,12 +172,10 @@ const showPower = (ip: any) => {
   return props.powerList[ip] ? !!props.powerList[ip]['power'] : false
 }
 const closeWs = () => {
-  showTerminal.value = false
-  // ws.value?.wsInit()
-}
-const openTerminal = () => {
-  // window.open('http://117.50.174.56:8888/', '_blank')
-  window.open('http://localhost:9999/', '_blank')
+  ws.value?.closeWs()
+  setTimeout(() => {
+    showTerminal.value = false
+  }, 200)
 }
 const imageFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({

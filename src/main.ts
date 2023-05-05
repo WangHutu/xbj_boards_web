@@ -12,7 +12,6 @@ import './assets/reset.css'
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-// import socket from './common/io'
 
 const app = createApp(App)
 
@@ -25,4 +24,3 @@ app.use(router)
 app.use(ElementPlus)
 
 app.mount('#app')
-// app.config.globalProperties.$socket = socket

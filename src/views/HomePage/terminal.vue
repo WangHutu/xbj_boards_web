@@ -1,40 +1,40 @@
 <template>
   <div class="terminal_wrap" ref="terminal"></div>
+  <button @click="sendMessage">send</button>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { Terminal } from 'xterm'
-import { FitAddon } from 'xterm-addon-fit'
-import { AttachAddon } from 'xterm-addon-attach'
+import { onMounted } from 'vue'
+import { io } from 'socket.io-client'
 
-const terminal = ref()
+var socket = io('http://localhost:5000', {
+  autoConnect: false // 自动连接
+})
 
+socket.on('message', function (msg) {
+  console.log('接收消息', msg)
+})
 
-
-onMounted(async () => {
-  const term:any = new Terminal({
-    cursorBlink: true
+const sendMessage = () => {
+  console.log('发送消息')
+  socket.emit('message', 'test-value', (response: any) => {
+    console.log(response, '发送消息，接收发送成功响应信息')
   })
+}
 
-  const fitAddon = new FitAddon()
-  term.loadAddon(fitAddon)
-  //   const attachAddon = new AttachAddon(new WebSocket('ws://117.50.174.56:8999/shellinabox/'))
-  const attachAddon: any = new AttachAddon(new WebSocket('ws://localhost:8888'))
-  term.loadAddon(attachAddon)
+onMounted(() => {
+  // socket.on('message', function (msg) {
+  //   console.log('接收消息', msg)
+  // })
+  socket.connect()
+})
 
-  //   term.write('Hello, world!')
+const closeWs = () => {
+  console.log('断开连接')
+  socket.disconnect()
+}
 
-  fitAddon.fit()
-  term.open(terminal.value)
-  //   term.addEventListener('message', (event) => {
-  //     term.write(event.data)
-  //   })
-  //   term.onData((data) => {
-  //     socket.send(data)
-  //   })
-  terminal.value.addEventListener('open', () => {
-    term.attach(attachAddon)
-  })
+defineExpose({
+  closeWs
 })
 </script>
