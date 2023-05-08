@@ -89,7 +89,7 @@
         >
         <el-link
           :disabled="scope.row.status !== 'vacant'"
-          v-if="showSerial(scope.row.ip)"
+          v-if="showSerial(scope.row.ip) && showI == 'runfengw'"
           type="primary"
           :underline="false"
           @click="showImageDialog(scope.row)"

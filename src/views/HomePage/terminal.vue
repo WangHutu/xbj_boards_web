@@ -28,7 +28,8 @@ onMounted(() => {
   terminal.value.open(terminalRef.value)
   terminal.value.focus()
 
-  socketRef.value = io('http://117.50.174.56/:5000', {
+  // http://117.50.174.56/:5000
+  socketRef.value = io('/ws', {
     autoConnect: false // 自动连接
   })
   socketRef.value.on('connect', () => {
