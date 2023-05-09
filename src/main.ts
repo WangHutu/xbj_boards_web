@@ -12,6 +12,13 @@ import './assets/reset.css'
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
+// import VueSocketIO from 'vue-socket.io'
+// import SocketIO from 'socket.io-client'
+// const socket = new VueSocketIO({
+//   connection: SocketIO('http://localhost:5000'),      //使用Socket.IO-client
+//   // extraHeaders: {"Access-Control-Allow-Origin": '*'},
+  
+// })
 
 const app = createApp(App)
 
@@ -24,3 +31,5 @@ app.use(router)
 app.use(ElementPlus)
 
 app.mount('#app')
+
+// app.config.globalProperties.$socket = socket

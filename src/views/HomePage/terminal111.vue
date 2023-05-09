@@ -44,7 +44,12 @@ onMounted(() => {
     withCredentials: true,
     forceNew: true
   })
-
+  // socketRef.value = new Server({
+  //   debug: true,
+  //   connection: io('http://117.50.174.56/:5000'), //使用Socket.IO-client
+  //   //  extraHeaders: {"Access-Control-Allow-Origin": '*'},
+  //   cors: { origin: 'http://localhost:8080' }
+  // })
   socketRef.value.on('connect', () => {
     console.log('Connected to the socket server')
   })
