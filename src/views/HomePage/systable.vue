@@ -79,7 +79,7 @@
           v-if="showI == 'runfengw'"
           type="primary"
           :underline="false"
-          @click="openTerminal()" 
+          @click="showTerminal = true"
           >openTerminal</el-link
         >
         <el-divider v-if="ipList.includes(scope.row.ip) || showSerial(scope.row.ip)" />
