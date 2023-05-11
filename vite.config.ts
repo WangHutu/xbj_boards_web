@@ -28,7 +28,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
       '/socket.io':{
-        target: 'http://localhost:5000', // target host
+        target: 'http://localhost:5000/socket.io', // target host
         ws: true,
         changeOrigin: true, // needed for virtual hosted sites
       }

@@ -53,7 +53,7 @@ onMounted(() => {
   })
   socketRef.value.on('message', (data: any) => {
     console.log('server message ---> ', data)
-    terminal.value.write(data.Data)
+    terminal.value.write(data)
     terminal.value.write('\r\n\x1b[33m$\x1b[0m ')
   })
 
