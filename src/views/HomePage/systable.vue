@@ -79,7 +79,7 @@
           v-if="showI == 'runfengw'"
           type="primary"
           :underline="false"
-          @click="showTerminal = true"
+          @click="openTerminal()" 
           >openTerminal</el-link
         >
         <el-divider v-if="ipList.includes(scope.row.ip) || showSerial(scope.row.ip)" />
@@ -175,7 +175,7 @@ const showPower = (ip: any) => {
   return props.powerList[ip] ? !!props.powerList[ip]['power'] : false
 }
 const openTerminal = () => {
-  window.open("http://117.50.174.56:8888", '_blank')
+  window.open("http://localhost:9999", '_blank')
 }
 const closeWs = () => {
   ws.value?.closeWs()
