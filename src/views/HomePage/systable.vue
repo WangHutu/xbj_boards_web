@@ -75,14 +75,14 @@
           @click="openTerminal()" 
         @click="showTerminal = true"
       -->
-        <el-link
-          v-if="showI == 'runfengw'"
-          type="primary"
-          :underline="false"
-          @click="openTerminal()" 
+        <el-link v-if="stateBtn" type="primary" :underline="false" @click="openTerminal()"
           >openTerminal</el-link
         >
-        <el-divider v-if="ipList.includes(scope.row.ip) || showSerial(scope.row.ip)" />
+        <el-divider
+          v-if="
+            (ipList.includes(scope.row.ip) && showPower(scope.row.ip)) || showSerial(scope.row.ip)
+          "
+        />
         <el-link
           v-if="ipList.includes(scope.row.ip) && showPower(scope.row.ip)"
           type="primary"
@@ -175,7 +175,7 @@ const showPower = (ip: any) => {
   return props.powerList[ip] ? !!props.powerList[ip]['power'] : false
 }
 const openTerminal = () => {
-  window.open("http://localhost:9999", '_blank')
+  window.open('http://localhost:9999', '_blank')
 }
 const closeWs = () => {
   ws.value?.closeWs()
