@@ -1,7 +1,27 @@
 <template>
   <el-table v-loading="loading" :data="tableData" stripe border style="width: 100%">
     <el-table-column fixed prop="type" label="Type" width="90" />
-    <el-table-column fixed prop="ip" label="Ip" min-width="150" />
+    <el-table-column fixed prop="ip" label="Ip" min-width="150">
+      <template #default="scope: any">
+        <span style="margin-right: 10px">{{ scope.row.ip }}</span>
+        <span v-if="powerList[scope.row.ip]?.power">
+          <!-- {{powerList[scope.row.ip].power}} -->
+          <el-tooltip
+            class="box-item"
+            effect="dark"
+            content="Board Information"
+            placement="top"
+          >
+            <el-link
+              style="padding-bottom: 3px"
+              @click="viewInfo(powerList[scope.row.ip].power, scope.row.ip)"
+            >
+              <el-icon><View /></el-icon>
+            </el-link>
+          </el-tooltip>
+        </span>
+      </template>
+    </el-table-column>
     <el-table-column prop="number" label="Hardware Rev" min-width="110" />
     <el-table-column prop="image" label="Image" min-width="120" />
     <el-table-column prop="status" label="State" width="120px" align="center">
@@ -130,6 +150,31 @@
       </span>
     </template>
   </el-dialog>
+  <el-dialog
+    :close-on-click-modal="false"
+    :show-close="false"
+    :model-value="viewShow"
+    title="Board Information."
+    width="600px"
+  >
+    <p class="info_item">
+      <span class="item_label">Ip：</span>
+      <span class="item_text">{{ boardInfoObj.ip }}</span>
+    </p>
+    <p class="info_item">
+      <span class="item_label">Address：</span>
+      <span class="item_text">{{ boardInfoObj.strip_addr }}</span>
+    </p>
+    <p class="info_item">
+      <span class="item_label">Outlet：</span>
+      <span class="item_text">{{ boardInfoObj.outlet }}</span>
+    </p>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="viewhide()">close</el-button>
+      </span>
+    </template>
+  </el-dialog>
   <div v-if="showTerminal">
     <terminal ref="ws" />
     <button @click="closeWs()">close</button>
@@ -157,11 +202,23 @@ interface Dialogform {
   id: string
   opearUser: string
 }
+interface BoardInfo {
+  strip_type: string
+  outlet: string
+  strip_addr: string
+  ip: string
+}
 const imageForm = reactive<Dialogform>({
   image: '',
   ip: '',
   id: '',
   opearUser: ''
+})
+const boardInfoObj = reactive<BoardInfo>({
+  strip_type: '',
+  outlet: '',
+  strip_addr: '',
+  ip: ''
 })
 const ws = ref<InstanceType<typeof terminal>>()
 const showI = LocalVue.getLocal('adminUser')?.split('"').join('')
@@ -176,6 +233,18 @@ const showPower = (ip: any) => {
 }
 const openTerminal = () => {
   window.open('http://localhost:9999', '_blank')
+}
+const viewInfo = (data: any, ip: any) => {
+  viewShow.value = true
+  boardInfoObj['outlet'] = data.outlet
+  boardInfoObj['strip_addr'] = data.strip_addr
+  boardInfoObj['ip'] = ip
+}
+const viewhide = () => {
+  viewShow.value = false
+  boardInfoObj['outlet'] = ''
+  boardInfoObj['strip_addr'] = ''
+  boardInfoObj['ip'] = ''
 }
 const closeWs = () => {
   ws.value?.closeWs()
@@ -192,6 +261,7 @@ const editHandle = (row: any) => {
   emit('showDialog', row)
 }
 const imageDirState = ref(false)
+const viewShow = ref(false)
 const row = reactive({
   id: '',
   type: '',
@@ -435,5 +505,15 @@ a {
 }
 ::v-deep .el-divider {
   margin: 10px 0;
+}
+.info_item {
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+.info_item .item_label {
+  font-size: 16px;
+  display: inline-block;
+  width: 100px;
 }
 </style>
