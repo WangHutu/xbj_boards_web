@@ -462,7 +462,7 @@ const onCloseHandle = (formEl: FormInstance | undefined) => {
 const getHistoryInfo = (ip:any)=>{
   reImage.getFlashHistory({ip}).then((res:any) => {
     flashTime.value = res.data.flashHistory
-    imageDirState.value = false
+    historyLoading.value = false
   })
 }
 const flashImage = async (formEl: FormInstance | undefined) => {
