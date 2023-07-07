@@ -6,12 +6,7 @@
         <span style="margin-right: 10px">{{ scope.row.ip }}</span>
         <span v-if="powerList[scope.row.ip]?.power">
           <!-- {{powerList[scope.row.ip].power}} -->
-          <el-tooltip
-            class="box-item"
-            effect="dark"
-            content="Board Information"
-            placement="top"
-          >
+          <el-tooltip class="box-item" effect="dark" content="Board Information" placement="top">
             <el-link
               style="padding-bottom: 3px"
               @click="viewInfo(powerList[scope.row.ip].power, scope.row.ip)"
@@ -135,6 +130,12 @@
       label-width="100px"
       @submit.prevent
     >
+      <el-form-item prop="">
+        <template #label> Last Flash </template>
+        <span v-loading="historyLoading">
+          {{ flashTime }}
+        </span>
+      </el-form-item>
       <el-form-item label="image path" prop="image">
         <el-input
           v-model.trim="imageForm.image"
@@ -223,6 +224,7 @@ const boardInfoObj = reactive<BoardInfo>({
 const ws = ref<InstanceType<typeof terminal>>()
 const showI = LocalVue.getLocal('adminUser')?.split('"').join('')
 const showTerminal = ref(false)
+const flashTime = ref('')
 const showSerial = (ip: any) => {
   return props.powerList[ip]
     ? !!(props.powerList[ip]['serial'] || props.powerList[ip]['jtag'])
@@ -261,6 +263,7 @@ const editHandle = (row: any) => {
   emit('showDialog', row)
 }
 const imageDirState = ref(false)
+const historyLoading = ref(true)
 const viewShow = ref(false)
 const row = reactive({
   id: '',
@@ -442,7 +445,9 @@ const showImageDialog = (row: any) => {
     LocalVue.getLocal('adminUser')?.split('"').join('') ||
     LocalVue.getLocal('user')?.split('"').join('') ||
     ''
+  historyLoading.value = true
   imageDirState.value = true
+  getHistoryInfo(row.ip)
 }
 const onCloseHandle = (formEl: FormInstance | undefined) => {
   if (!formEl) return
@@ -450,7 +455,15 @@ const onCloseHandle = (formEl: FormInstance | undefined) => {
   imageForm['image'] = ''
   imageForm['ip'] = ''
   imageForm['id'] = ''
+  historyLoading.value = false
   imageDirState.value = false
+  flashTime.value = ''
+}
+const getHistoryInfo = (ip:any)=>{
+  reImage.getFlashHistory({ip}).then((res:any) => {
+    flashTime.value = res.data.flashHistory
+    imageDirState.value = false
+  })
 }
 const flashImage = async (formEl: FormInstance | undefined) => {
   if (!formEl) return

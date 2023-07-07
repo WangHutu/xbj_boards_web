@@ -145,6 +145,11 @@ export class reImage {
   static async restartImage(params: any) {
     return request('/restartImage', params, 'post')
   }
+
+  // getFlashHistory
+  static async getFlashHistory(params: any) {
+    return request('/getFlashHistory', params, 'post')
+  }
 }
 
 export class ws {
