@@ -29,6 +29,7 @@ const logText = ref('')
 const logLoading = ref(true)
 const dialogLogVisible = ref(false)
 const onCloseHandle = () => {
+  logText.value = ''
   dialogLogVisible.value = false
 }
 const dilogInit = (ip: any): void => {
