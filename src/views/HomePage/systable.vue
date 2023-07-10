@@ -134,6 +134,14 @@
         <template #label> Last Flash </template>
         <span v-loading="historyLoading">
           {{ flashTime }}
+          <el-link
+            style="margin-left: 10px"
+            :disabled="flashTime === 'NONE'"
+            :underline="false"
+            type="primary"
+            @click="showFlashLog"
+            >info <el-icon><DArrowRight /></el-icon
+          ></el-link>
         </span>
       </el-form-item>
       <el-form-item label="image path" prop="image">
@@ -144,6 +152,7 @@
         />
       </el-form-item>
     </el-form>
+    <flashlog ref="flashlogRef" v-model:dialog-form-visible="dialogLogVisible"></flashlog>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="onCloseHandle(imageFormRef)">Cancel</el-button>
@@ -189,6 +198,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { Boards, Power, reImage } from '@/api/api'
 import { LocalVue } from '@/common/utils'
 import terminal from './terminal.vue'
+import flashlog from './flashLog.vue'
 const props = defineProps<{
   tableData: Array<object>
   loading: Boolean
@@ -221,6 +231,11 @@ const boardInfoObj = reactive<BoardInfo>({
   strip_addr: '',
   ip: ''
 })
+const dialogLogVisible = ref(false)
+const flashlogRef = ref<InstanceType<typeof flashlog>>()
+const showFlashLog = () => {
+  flashlogRef.value?.dilogInit(imageForm.ip)
+}
 const ws = ref<InstanceType<typeof terminal>>()
 const showI = LocalVue.getLocal('adminUser')?.split('"').join('')
 const showTerminal = ref(false)
@@ -459,8 +474,8 @@ const onCloseHandle = (formEl: FormInstance | undefined) => {
   imageDirState.value = false
   flashTime.value = ''
 }
-const getHistoryInfo = (ip:any)=>{
-  reImage.getFlashHistory({ip}).then((res:any) => {
+const getHistoryInfo = (ip: any) => {
+  reImage.getFlashHistory({ ip }).then((res: any) => {
     flashTime.value = res.data.flashHistory
     historyLoading.value = false
   })

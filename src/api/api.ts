@@ -150,6 +150,11 @@ export class reImage {
   static async getFlashHistory(params: any) {
     return request('/getFlashHistory', params, 'post')
   }
+
+   // getFlashLog
+   static async getFlashLog(params: any) {
+    return request('/getFlashLog', params, 'post')
+  }
 }
 
 export class ws {
